@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<atv>
+  <body>
+    <videoPlayer id="com.sample.video-player">
+      <httpLiveStreamingVideoAsset
+          id="ABCD1234"
+          indefiniteDuration="true">
+        <mediaURL>{{ .MediaURL }}</mediaURL>
+        <title>{{ .Title }}</title>
+        <description>{{ .Description }}</description>
+        <image src720="{{ .Logo }}" src1080="{{ .Logo }}"/>
+        <type>
+          <dataType>video</dataType>
+        </type>
+        <content>
+          <contentType>film</contentType>
+          <statusCode>default</statusCode>
+        </content>
+      </httpLiveStreamingVideoAsset>
+    </videoPlayer>
+  </body>
+</atv>

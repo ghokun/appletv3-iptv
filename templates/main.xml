@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<atv>
+  <head>
+    <script src="https://appletv.redbull.tv/assets/application.js" />
+    <script src="https://appletv.redbull.tv/assets/ajax.js" />
+    <script src="https://appletv.redbull.tv/assets/testingcode.js" />
+  </head>
+  <body>
+    <viewWithNavigationBar
+        id="appletv3-iptv.main"
+        onNavigate="handleNavbarNavigate( event )">
+      <navigation currentIndex="0">
+        {{ range $key, $value := .Categories }}
+        <navigationItem id="{{ $key }}">
+          <title>{{ $value.Name }}</title>
+          <url>https://appletv.redbull.tv/category.xml?category={{ $value.ID }}</url>
+        </navigationItem>
+        {{ end }}
+      </navigation>
+    </viewWithNavigationBar>
+  </body>
+</atv>
