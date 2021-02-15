@@ -1,7 +1,7 @@
 {{ define "body" -}}
 <search id="{{ .BodyID }}">
   <header>
-    <simpleHeader accessibilityLabel="Search example">
+    <simpleHeader accessibilityLabel="{{ index .Translations "search.title" }}">
       <title>{{ index .Translations "search.title" }}</title>
     </simpleHeader>
   </header>

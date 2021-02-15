@@ -14,7 +14,7 @@
     {{ range $key, $value := .Data.Categories }}
     <navigationItem id="{{ $key }}">
       <title>{{ $value.Name }}</title>
-      <url>{{ $.BasePath }}/category.xml?category={{ $value.Name }}</url>
+      <url>{{ $.BasePath }}/category.xml?category={{ $key }}</url>
     </navigationItem>
     {{- end }}
     <navigationItem id="settings">

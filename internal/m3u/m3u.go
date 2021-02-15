@@ -2,7 +2,7 @@ package m3u
 
 import (
 	"bufio"
-	"encoding/base64"
+	"encoding/hex"
 	"errors"
 	"image"
 	"image/jpeg"
@@ -17,6 +17,7 @@ import (
 )
 
 // Playlist struct defines a M3U playlist. M3U playlist starts with #EXTM3U line.
+// It also holds recently played channels
 type Playlist struct {
 	Categories     map[string]Category
 	RecentChannels []Channel
@@ -31,6 +32,7 @@ func (playlist *Playlist) PrependRecentChannel(channel Channel) {
 // Category in a M3U playlist, group-title attribute.
 // Default value is Uncategorized.
 type Category struct {
+	ID       string
 	Name     string
 	Channels map[string]Channel
 }
@@ -45,6 +47,7 @@ type Channel struct {
 	Logo        string // tvg-logo or placeholder. 16x9 aspect ratio
 	Description string // TODO will be used for EPG implementation
 	Category    string // group-title or Uncategorized
+	CategoryID  string // For link generation purposes
 }
 
 var singleton *Playlist
@@ -59,64 +62,6 @@ func GeneratePlaylist(fileName string) (err error) {
 // GetPlaylist returns singleton
 func GetPlaylist() *Playlist {
 	return singleton
-}
-
-func parseAttributes(attributes string, title string) (category string, id string, logo string, description string) {
-	tagsRegExp, _ := regexp.Compile("([a-zA-Z0-9-]+?)=\"([^\"]+)\"")
-	tagList := tagsRegExp.FindAllString(attributes, -1)
-	id = title
-	category = "Uncategorized"
-	description = ""
-
-	for i := range tagList {
-		tagInfo := strings.Split(tagList[i], "=")
-		tagKey := tagInfo[0]
-		tagValue := strings.Replace(tagInfo[1], "\"", "", -1)
-		if tagKey == "group-title" {
-			category = tagValue
-		}
-		if tagKey == "tvg-id" {
-			id = tagValue
-		}
-		if tagKey == "tvg-logo" {
-			logo = tagValue
-		}
-		if tagKey == "tvg-url" {
-			description = tagValue
-		}
-	}
-	id = strings.ReplaceAll(id, " ", "_")
-	id = base64.StdEncoding.EncodeToString([]byte(id))
-	// Cache logo
-	_ = os.Mkdir(".cache", os.ModePerm)
-	_ = os.Mkdir(".cache/logo", os.ModePerm)
-
-	// Get
-	if logo != "" {
-
-		response, err := http.Get(logo)
-		if err != nil {
-			log.Println(err)
-		}
-		if response != nil && response.Body != nil {
-			defer response.Body.Close()
-		}
-		// Create file
-		logo = ".cache/logo/" + id + ".png"
-		file, err := os.Create(logo)
-		if err != nil {
-			log.Fatal(err)
-		}
-		logo = "https://appletv.redbull.tv/logo/" + id + ".png"
-		defer file.Close()
-
-		image, _, err := image.Decode(response.Body)
-		if err == nil {
-			newImage := resize.Resize(160, 90, image, resize.Lanczos3)
-			err = jpeg.Encode(file, newImage, nil)
-		}
-	}
-	return
 }
 
 // ParseM3U parses an m3u list.
@@ -161,6 +106,7 @@ func ParseM3U(fileNameOrURL string) (playlist Playlist, err error) {
 			attributes := channelInfo[0]
 			title := channelInfo[1]
 			category, id, logo, description := parseAttributes(attributes, title)
+			categoryID := hex.EncodeToString([]byte(category))
 			// Next line is m3u8 url
 			scanner.Scan()
 			mediaURL := scanner.Text()
@@ -172,21 +118,81 @@ func ParseM3U(fileNameOrURL string) (playlist Playlist, err error) {
 				Logo:        logo,
 				Description: description,
 				Category:    category,
+				CategoryID:  categoryID,
 			}
 
 			if playlist.Categories == nil {
 				playlist.Categories = make(map[string]Category)
 			}
-			if _, ok := playlist.Categories[category]; !ok {
-				playlist.Categories[category] = Category{
+			if _, ok := playlist.Categories[categoryID]; !ok {
+				playlist.Categories[categoryID] = Category{
+					ID:       categoryID,
 					Name:     category,
 					Channels: make(map[string]Channel),
 				}
 			}
-			if _, ok := playlist.Categories[category].Channels[channel.ID]; !ok {
-				playlist.Categories[category].Channels[channel.ID] = channel
+			if _, ok := playlist.Categories[categoryID].Channels[channel.ID]; !ok {
+				playlist.Categories[categoryID].Channels[channel.ID] = channel
 			}
 		}
 	}
 	return playlist, err
+}
+
+func parseAttributes(attributes string, title string) (category string, id string, logo string, description string) {
+	tagsRegExp, _ := regexp.Compile("([a-zA-Z0-9-]+?)=\"([^\"]+)\"")
+	tags := tagsRegExp.FindAllString(attributes, -1)
+	id = title
+	category = "Uncategorized"
+	description = ""
+
+	for i := range tags {
+		tagParts := strings.Split(tags[i], "=")
+		tagKey := tagParts[0]
+		tagValue := strings.Replace(tagParts[1], "\"", "", -1)
+		if tagKey == "group-title" {
+			category = tagValue
+		}
+		if tagKey == "tvg-id" {
+			id = tagValue
+		}
+		if tagKey == "tvg-logo" {
+			logo = tagValue
+		}
+		if tagKey == "tvg-url" {
+			description = tagValue
+		}
+	}
+	id = strings.ReplaceAll(id, " ", "_")
+	id = hex.EncodeToString([]byte(id))
+	// Cache logo
+	_ = os.Mkdir(".cache", os.ModePerm)
+	_ = os.Mkdir(".cache/logo", os.ModePerm)
+
+	// Get
+	if logo != "" {
+
+		response, err := http.Get(logo)
+		if err != nil {
+			log.Println(err)
+		}
+		if response != nil && response.Body != nil {
+			defer response.Body.Close()
+		}
+		// Create file
+		logo = ".cache/logo/" + id + ".png"
+		file, err := os.Create(logo)
+		if err != nil {
+			log.Fatal(err)
+		}
+		logo = "https://appletv.redbull.tv/logo/" + id + ".png"
+		defer file.Close()
+
+		image, _, err := image.Decode(response.Body)
+		if err == nil {
+			newImage := resize.Resize(160, 90, image, resize.Lanczos3)
+			err = jpeg.Encode(file, newImage, nil)
+		}
+	}
+	return
 }

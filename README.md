@@ -17,5 +17,7 @@
 - [x] Search channels
 - [x] Better templates
 - [ ] GitHub actions to autorelease
-- [ ] Localization
+- [x] Localization
 - [ ] Accesibility labels
+- [ ] EPG support
+- [ ] Inject application icon

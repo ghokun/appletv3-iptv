@@ -23,8 +23,8 @@
               id="{{ $value.ID }}"
               accessibilityLabel="{{ $value.Title }}"
               alwaysShowTitles="true"
-              onSelect="atvutils.loadURL('{{.BasePath }}/player.xml?category={{ $value.Category }}&amp;channel={{ $value.ID }}');"
-              onPlay="atvutils.loadURL('{{.BasePath }}/player.xml?category={{ $value.Category }}&amp;channel={{ $value.ID }}');">
+              onSelect="atvutils.loadURL('{{ $.BasePath }}/player.xml?category={{ $value.CategoryID }}&amp;channel={{ $value.ID }}');"
+              onPlay="atvutils.loadURL('{{ $.BasePath }}/player.xml?category={{ $value.CategoryID }}&amp;channel={{ $value.ID }}');">
             <title>{{ $value.Title }}</title>
             <subtitle>{{ $value.Category }}</subtitle>
             <image

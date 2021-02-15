@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/ghokun/appletv3-iptv/internal/appletv"
-	"github.com/ghokun/appletv3-iptv/pkg/m3u"
+	"github.com/ghokun/appletv3-iptv/internal/m3u"
 )
 
 func serveHTTP(mux *http.ServeMux, port string, errs chan<- error) {
@@ -21,8 +21,8 @@ func main() {
 
 	m3uPathPtr := flag.String("m3u", "https://iptv-org.github.io/iptv/countries/uk.m3u", "URL that starts with http(s) or a local file path")
 	httpPortPtr := flag.String("http", "80", "Port for http requets.")
-	httpsPortPtr := flag.String("https", "443", "Port for http requets.")
-	certificatePtr := flag.String("crt", "assets/certs/redbulltv.pem", "Certificate path.")
+	httpsPortPtr := flag.String("https", "443", "Port for https requets.")
+	certificatePtr := flag.String("pem", "assets/certs/redbulltv.pem", "Certificate path.")
 	keyPtr := flag.String("key", "assets/certs/redbulltv.key", "Key path.")
 
 	flag.Parse()

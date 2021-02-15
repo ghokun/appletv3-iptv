@@ -8,8 +8,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/ghokun/appletv3-iptv/pkg/m3u"
-	"github.com/google/uuid"
+	"github.com/ghokun/appletv3-iptv/internal/m3u"
+	"golang.org/x/text/language"
 )
 
 type TemplateData struct {
@@ -19,15 +19,19 @@ type TemplateData struct {
 	Translations map[string]string
 }
 
+var matcher = language.NewMatcher([]language.Tag{
+	language.AmericanEnglish,
+	language.Turkish,
+})
+
 func generateXML(w http.ResponseWriter, r *http.Request, templateName string, data interface{}) {
 	template, err := template.ParseFiles("templates/base.xml", templateName)
 	if err != nil {
 		panic(err)
 	}
-	//locale := r.Header.Get("Accept-Language")
-	// TODO localization
-
-	file, err := os.Open("templates/locales/en.json")
+	accept := r.Header.Get("Accept-Language")
+	tag, _ := language.MatchStrings(matcher, accept)
+	file, err := os.Open("templates/locales/" + tag.String() + ".json")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,10 +40,10 @@ func generateXML(w http.ResponseWriter, r *http.Request, templateName string, da
 	if err := json.NewDecoder(file).Decode(&translations); err != nil {
 		log.Fatal(err)
 	}
-	
+
 	templateData := TemplateData{
 		BasePath:     "https://appletv.redbull.tv",
-		BodyID:       uuid.NewString(),
+		BodyID:       templateName,
 		Data:         data,
 		Translations: translations,
 	}
