@@ -1,22 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<atv>
-  <head>
-    <script src="https://appletv.redbull.tv/assets/application.js" />
-    <script src="https://appletv.redbull.tv/assets/ajax.js" />
-    <script src="https://appletv.redbull.tv/assets/testingcode.js" />
-  </head>
-  <body>
-    <viewWithNavigationBar
-        id="appletv3-iptv.main"
-        onNavigate="handleNavbarNavigate( event )">
-      <navigation currentIndex="0">
-        {{ range $key, $value := .Categories }}
-        <navigationItem id="{{ $key }}">
-          <title>{{ $value.Name }}</title>
-          <url>https://appletv.redbull.tv/category.xml?category={{ $value.ID }}</url>
-        </navigationItem>
-        {{ end }}
-      </navigation>
-    </viewWithNavigationBar>
-  </body>
-</atv>
+{{ define "body" -}}
+<viewWithNavigationBar
+    id="{{ .BodyID }}"
+    onNavigate="handleNavbarNavigate( event )">
+  <navigation currentIndex="0">
+    <navigationItem id="recent">
+      <title>{{ index .Translations "main.recent" }}</title>
+      <url>{{ .BasePath }}/recent.xml</url>
+    </navigationItem>
+    <navigationItem id="search">
+      <title>{{ index .Translations "main.search" }}</title>
+      <url>{{ .BasePath }}/search.xml</url>
+    </navigationItem>
+    {{ range $key, $value := .Data.Categories }}
+    <navigationItem id="{{ $key }}">
+      <title>{{ $value.Name }}</title>
+      <url>{{ $.BasePath }}/category.xml?category={{ $value.Name }}</url>
+    </navigationItem>
+    {{- end }}
+    <navigationItem id="settings">
+      <title>{{ index .Translations "main.settings" }}</title>
+      <url>{{ .BasePath }}/settings.xml</url>
+    </navigationItem>
+  </navigation>
+</viewWithNavigationBar>
+{{- end }}

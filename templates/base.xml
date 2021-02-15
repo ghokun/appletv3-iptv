@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<atv>
+  <head>
+    <script src="{{ .BasePath }}/assets/application.js" />
+    <script src="{{ .BasePath }}/assets/ajax.js" />
+    <script src="{{ .BasePath }}/assets/testingcode.js" />
+  </head>
+  <body>
+    {{ template "body" . }}
+  </body>
+</atv>

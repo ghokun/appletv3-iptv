@@ -1,0 +1,32 @@
+{{ define "body" -}}
+<searchResults id="{{ .BodyID }}">
+  <menu>
+    <sections>
+      {{ range $key, $value := .Data.Categories }}
+      <menuSection>
+        <header>
+          <horizontalDivider
+              alignment="center"
+              accessibilityLabel="{{ $value.Name }}">
+            <title>{{ $value.Name }}</title>
+          </horizontalDivider>
+        </header>
+        <items>
+          {{ range $subKey, $subValue := $value.Channels }}
+          <posterMenuItem
+              id="{{ $subValue.ID }}"
+              accessibilityLabel="{{ $subValue.Title }}"
+              onSelect="atvutils.loadURL('{{.BasePath }}/player.xml?category={{ $subValue.Category }}&amp;channel={{ $subValue.ID }}');"
+              onPlay="atvutils.loadURL('{{.BasePath }}/player.xml?category={{ $subValue.Category }}&amp;channel={{ $subValue.ID }}');">
+            <label>{{ $subValue.Title }}</label>
+            <label2>{{ $subValue.Category }}</label2>
+            <image>{{ $subValue.Logo }}</image>
+          </posterMenuItem>
+          {{- end }}
+        </items>
+      </menuSection>
+      {{- end }}
+    </sections>
+  </menu>
+</searchResults>
+{{- end }}

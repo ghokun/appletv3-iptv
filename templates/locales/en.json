@@ -1,0 +1,11 @@
+{
+  "main.recent": "Recent",
+  "main.search": "Search",
+  "main.settings": "Settings",
+  "recent.empty.title" : "No Recent Channels",
+  "recent.empty.description" : "You haven't visited any channels recently.",
+  "recent.title": "Recently Watched Channels",
+  "search.title": "Search For Channels",
+  "settings.title": "Settings",
+  "settings.reload" : "Reload Channel List"
+}

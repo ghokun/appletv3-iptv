@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>javascript-url</key>
+    <string>https://appletv.redbull.tv/assets/application-d2c261b5c9aebdd31db887659ebde38deb7d8ffc9b212ea1c8caf4d4b7a35869.js</string>
+    <key>root-url</key>
+    <string>https://appletv.redbull.tv/</string>
+    <key>auth-type</key>
+    <string>js</string>
+    <key>enabled</key>
+    <string>YES</string>
+    <key>menu-title</key>
+    <string>Red Bull TV</string>
+    <key>merchant</key>
+    <string>com.redbulltv.appletv.prod</string>
+    <key>top-shelf-url</key>
+    <string>https://appletv.redbull.tv/</string>
+    <key>menu-icon-url</key>
+    <dict>
+      <key>720</key>
+      <string>https://appletv.redbull.tv/assets/rbtv-tv-ios-720-f0b5a73651e6c4b039ab9cb8e5e7cb9922310773dfe309abad042d8a76dee1e6.png</string>
+      <key>1080</key>
+      <string>https://appletv.redbull.tv/assets/rbtv-tv-ios-1080-7793faf899da090489e5d4372db7916f43792388d23cbb2423eb6e03a350285e.png</string>
+    </dict>
+    <key>menu-icon-url-version</key>
+    <string>2.3</string>
+  </dict>
+</plist>

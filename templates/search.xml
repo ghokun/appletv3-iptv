@@ -1,0 +1,10 @@
+{{ define "body" -}}
+<search id="{{ .BodyID }}">
+  <header>
+    <simpleHeader accessibilityLabel="Search example">
+      <title>{{ index .Translations "search.title" }}</title>
+    </simpleHeader>
+  </header>
+  <baseURL>{{ .BasePath }}/search-results.xml?term=</baseURL>
+</search>
+{{- end }}

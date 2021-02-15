@@ -1,0 +1,41 @@
+{{ define "body" -}}
+  {{ if not .Data.RecentChannels }}
+  <dialog id="{{ .BodyID }}">
+    <title>{{ index .Translations "recent.empty.title" }}</title>
+    <description>{{ index .Translations "recent.empty.description" }}</description>
+  </dialog>
+  {{ else }}
+  <scroller id="{{ .BodyID }}">
+    <header>
+      <simpleHeader
+          accessibilityLabel="{{ index .Translations "recent.title" }}"
+          horizontalAlignment="right">
+        <title>{{ index .Translations "recent.title" }}</title>
+      </simpleHeader>
+    </header>
+    <items>
+      <grid
+          id="{{ .BodyID }}-grid"
+          columnCount="5">
+        <items>
+          {{ range $value := .Data.RecentChannels }}
+          <sixteenByNinePoster
+              id="{{ $value.ID }}"
+              accessibilityLabel="{{ $value.Title }}"
+              alwaysShowTitles="true"
+              onSelect="atvutils.loadURL('{{.BasePath }}/player.xml?category={{ $value.Category }}&amp;channel={{ $value.ID }}');"
+              onPlay="atvutils.loadURL('{{.BasePath }}/player.xml?category={{ $value.Category }}&amp;channel={{ $value.ID }}');">
+            <title>{{ $value.Title }}</title>
+            <subtitle>{{ $value.Category }}</subtitle>
+            <image
+                src720="{{ $value.Logo }}"
+                src1080="{{ $value.Logo }}" />
+            <defaultImage>resource://16x9.png</defaultImage>
+          </sixteenByNinePoster>
+          {{- end }}
+        </items>
+      </grid>
+    </items>
+  </scroller>
+  {{- end }}
+{{- end }}

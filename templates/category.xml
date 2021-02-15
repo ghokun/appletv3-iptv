@@ -1,36 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<atv>
-  <head>
-    <script src="https://appletv.redbull.tv/assets/application.js" />
-  </head>
-  <body>
-    <scroller id="appletv3-iptv.category">
-      <header>
-        <simpleHeader
-            accessibilityLabel="{{ .Name}}"
-            horizontalAlignment="right">
-          <title>{{ .Name}}</title>
-        </simpleHeader>
-      </header>
+{{ define "body" -}}
+<scroller id="{{ .BodyID }}">
+  <header>
+    <simpleHeader
+        accessibilityLabel="{{ .Data.Name }}"
+        horizontalAlignment="right">
+      <title>{{ .Data.Name }}</title>
+    </simpleHeader>
+  </header>
+  <items>
+    <grid
+        id="{{ .BodyID }}-grid"
+        columnCount="5">
       <items>
-        <grid id="grid_0">
-          <items>
-            {{ range $key, $value := .Channels }}
-            <moviePoster
-                id="grid_item_14"
-                accessibilityLabel="Movie 14"
-                onSelect="atvutils.loadURL('https://appletv.redbull.tv/player.xml?category={{ $.ID }}&amp;channel={{ $value.ID }}');"
-                onPlay="atvutils.loadURL('https://appletv.redbull.tv/player.xml?category={{ $.ID }}&amp;channel={{ $value.ID }}');">
-              <title>{{ $value.Title }}</title>
-              <image
-                  src720="{{ $value.Logo }}"
-                  src1080="{{ $value.Logo }}" />
-              <defaultImage>resource://Poster.png</defaultImage>
-            </moviePoster>
-            {{ end }}
-          </items>
-        </grid>
+        {{ range $key, $value := .Data.Channels }}
+        <sixteenByNinePoster
+            id="{{ $value.ID }}"
+            accessibilityLabel="{{ $value.Title }}"
+            alwaysShowTitles="true"
+            onSelect="atvutils.loadURL('{{ $.BasePath }}/player.xml?category={{ $value.Category }}&amp;channel={{ $value.ID }}');"
+            onPlay="atvutils.loadURL('{{ $.BasePath }}/player.xml?category={{ $value.Category }}&amp;channel={{ $value.ID }}');">
+          <title>{{ $value.Title }}</title>
+          <!-- <subtitle>Subtitle</subtitle> -->
+          <image
+              src720="{{ $value.Logo }}"
+              src1080="{{ $value.Logo }}" />
+          <defaultImage>resource://16x9.png</defaultImage>
+        </sixteenByNinePoster>
+        {{- end }}
       </items>
-    </scroller>
-  </body>
-</atv>
+    </grid>
+  </items>
+</scroller>
+{{- end }}

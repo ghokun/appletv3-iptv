@@ -49,7 +49,7 @@ function handleNavbarNavigate( event ) {
 				// before sending it to the navigation bar.
 				var doc = xhr.responseXML,
 					title = doc.rootElement.getElementByTagName( 'title' );
-				title.textContent = title.textContent +": Appended by Javascript";
+				// title.textContent = title.textContent +": Appended by Javascript";
 
 				// Once the document is ready to load pass it to the event.success function
 				event.success( doc );

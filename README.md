@@ -3,7 +3,19 @@
 - [x] Certificate generation
 - [x] Intercept redbulltv
 - [x] Profile installation
-- [ ] Parse m3u files
-- [ ] Play m3u8 files
-- [ ] Category and Channel images
-- [ ] Cache assets
+- [x] Parse m3u files
+- [x] Play m3u8 files
+- [x] Category and Channel images
+- [x] Cache assets
+- [ ] Cleanup javascript files
+- [ ] Cleanup and document go files
+- [ ] Generate README
+- [ ] Logger
+- [ ] Refresh m3u file from UI
+- [ ] Generate images for missing ones
+- [x] Recently Played, 10 items
+- [x] Search channels
+- [x] Better templates
+- [ ] GitHub actions to autorelease
+- [ ] Localization
+- [ ] Accesibility labels

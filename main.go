@@ -1,51 +1,56 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 
 	"github.com/ghokun/appletv3-iptv/internal/appletv"
-	"github.com/ghokun/appletv3-iptv/internal/m3u"
+	"github.com/ghokun/appletv3-iptv/pkg/m3u"
 )
 
-func serveHTTP(mux *http.ServeMux, errs chan<- error) {
-	errs <- http.ListenAndServe(":80", mux)
+func serveHTTP(mux *http.ServeMux, port string, errs chan<- error) {
+	errs <- http.ListenAndServe(":"+port, mux)
 }
 
-func serveHTTPS(mux *http.ServeMux, errs chan<- error) {
-	errs <- http.ListenAndServeTLS(":443", "assets/certs/redbulltv.pem", "assets/certs/redbulltv.key", mux)
+func serveHTTPS(mux *http.ServeMux, port string, certificate string, key string, errs chan<- error) {
+	errs <- http.ListenAndServeTLS(":"+port, certificate, key, mux)
 }
 
 func main() {
-	playlist, _ := m3u.Parse("news.m3u")
-	// if err == nil {
-	// 	for _, category := range playlist.Categories {
-	// 		for _, channel := range category.Channels {
-	// 			fmt.Println("ID: ", channel.ID)
-	// 			fmt.Println("Title: ", channel.Title)
-	// 			fmt.Println("Media URL: ", channel.MediaURL)
-	// 			fmt.Println("Logo: ", channel.Logo)
-	// 			fmt.Println("Description: ", channel.Description)
-	// 		}
-	// 	}
-	// }
 
+	m3uPathPtr := flag.String("m3u", "https://iptv-org.github.io/iptv/countries/uk.m3u", "URL that starts with http(s) or a local file path")
+	httpPortPtr := flag.String("http", "80", "Port for http requets.")
+	httpsPortPtr := flag.String("https", "443", "Port for http requets.")
+	certificatePtr := flag.String("crt", "assets/certs/redbulltv.pem", "Certificate path.")
+	keyPtr := flag.String("key", "assets/certs/redbulltv.key", "Key path.")
+
+	flag.Parse()
+
+	// Generate playlist singleton
+	err := m3u.GeneratePlaylist(*m3uPathPtr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Serve both http and https
 	mux := http.NewServeMux()
-	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets/js"))))
-	mux.HandleFunc("/redbulltv.cer", appletv.CertificateHandler)
 
-	mux.HandleFunc("/category.xml", func(w http.ResponseWriter, r *http.Request) {
-		appletv.CategoryHandler(w, r, playlist)
-	})
-	mux.HandleFunc("/player.xml", func(w http.ResponseWriter, r *http.Request) {
-		appletv.PlayerHandler(w, r, playlist)
-	})
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		appletv.MainHandler(w, r, playlist)
-	})
+	// Serve static files
+	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
+	mux.Handle("/logo/", http.StripPrefix("/logo/", http.FileServer(http.Dir(".cache/logo"))))
 
-	errs := make(chan error, 1) // a channel for errors
-	go serveHTTP(mux, errs)     // start the http server in a thread
-	go serveHTTPS(mux, errs)    // start the https server in a thread
-	log.Fatal(<-errs)           // block until one of the servers writes an error
+	// Serve apple tv pages
+	mux.HandleFunc("/", appletv.MainHandler)
+	mux.HandleFunc("/recent.xml", appletv.RecentHandler)
+	mux.HandleFunc("/category.xml", appletv.CategoryHandler)
+	mux.HandleFunc("/search.xml", appletv.SearchHandler)
+	mux.HandleFunc("/search-results.xml", appletv.SearchResultsHandler)
+	mux.HandleFunc("/player.xml", appletv.PlayerHandler)
+	mux.HandleFunc("/settings.xml", appletv.SettingsHandler)
+
+	errs := make(chan error, 1)
+	go serveHTTP(mux, *httpPortPtr, errs)
+	go serveHTTPS(mux, *httpsPortPtr, *certificatePtr, *keyPtr, errs)
+	log.Fatal(<-errs)
 }
