@@ -1,0 +1,6 @@
+{{ define "body" -}}
+<scrollingText id="{{ .BodyID }}">
+  <title>{{ index .Translations "settings.menu.trouble.logs.title" }}</title>
+  <text><![CDATA[{{ .Data }}]]></text>
+</scrollingText>
+{{- end }}

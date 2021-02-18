@@ -1,0 +1,37 @@
+{{ define "body" -}}
+<optionList
+    id="{{ .BodyID }}"
+    autoSelectSingleItem="false">
+  <title>{{ .Data.Title }}</title>
+  <footnote>{{ index .Translations "channel.options.footnote" }}</footnote>
+  <items>
+    <oneLineMenuItem
+        id="watch"
+        accessibilityLabel="{{ index .Translations "channel.options.watch" }}"
+        onSelect="atvutils.loadAndSwapURL('{{ $.BasePath }}/player.xml?category={{ .Data.CategoryID }}&amp;channel={{ .Data.ID }}');">
+      <label>{{ index .Translations "channel.options.watch" }}</label>
+    </oneLineMenuItem>
+    <oneLineMenuItem
+        id="detail"
+        accessibilityLabel="{{ index .Translations "channel.options.detail" }}"
+        onSelect="atvutils.loadAndSwapURL('{{ $.BasePath }}/channel.xml?category={{ .Data.CategoryID }}&amp;channel={{ .Data.ID }}');">
+      <label>{{ index .Translations "channel.options.detail" }}</label>
+    </oneLineMenuItem>
+    {{- if .Data.IsFavorite -}}
+    <oneLineMenuItem
+        id="toggle-favorite"
+        accessibilityLabel="{{ index .Translations "channel.options.rm-from-fav" }}"
+        onSelect="callUrlAndUnload('{{ $.BasePath }}/toggle-favorite?category={{ .Data.CategoryID }}&amp;channel={{ .Data.ID }}');">
+      <label>{{ index .Translations "channel.options.rm-from-fav" }}</label>
+    </oneLineMenuItem>
+    {{- else -}}
+    <oneLineMenuItem
+        id="toggle-favorite"
+        accessibilityLabel="{{ index .Translations "channel.options.add-to-fav" }}"
+        onSelect="callUrlAndUnload('{{ $.BasePath }}/toggle-favorite?category={{ .Data.CategoryID }}&amp;channel={{ .Data.ID }}');">
+      <label>{{ index .Translations "channel.options.add-to-fav" }}</label>
+    </oneLineMenuItem>
+    {{- end -}}
+  </items>
+</optionList>
+{{- end }}

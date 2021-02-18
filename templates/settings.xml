@@ -1,27 +1,110 @@
 {{ define "body" -}}
-<optionDialog id="{{ .BodyID }}">
+<listWithPreview id="{{ .BodyID }}">
   <header>
-    <simpleHeader accessibilityLabel="Dialog with Options">
+    <simpleHeader accessibilityLabel="{{ index .Translations " settings.title" }}">
       <title>{{ index .Translations "settings.title" }}</title>
     </simpleHeader>
   </header>
-  <description>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</description>
+  <preview>
+    <keyedPreview>
+      <title>&#x00AD;</title>
+      <summary>{{ index .Translations "settings.legal" }}</summary>
+      <metadataKeys>
+        <label>{{ index .Translations "settings.version" }}</label>
+        <label>{{ index .Translations "settings.source" }}</label>
+      </metadataKeys>
+      <metadataValues>
+        <label>{{ .Data.Version }}</label>
+        <label>https://github.com/ghokun/appletv3-iptv</label>
+      </metadataValues>
+      <image>{{ .BasePath }}/assets/images/settings.png</image>
+    </keyedPreview>
+  </preview>
+
   <menu>
-    <initialSelection>
-      <row>1</row>
-    </initialSelection>
     <sections>
       <menuSection>
+        <header>
+          <horizontalDivider alignment="left">
+            <title>{{ index .Translations "settings.menu.m3u.title" }}</title>
+          </horizontalDivider>
+        </header>
+        <items>
+          <twoLineMenuItem
+              id="edit-m3u"
+              accessibilityLabel="{{ index .Translations "settings.menu.m3u.edit" }}"
+              onSelect="editM3UAddress('{{ index .Translations "settings.menu.m3u.edit" }}','{{ index .Translations "settings.menu.m3u.instructions" }}','{{ index .Translations "settings.menu.m3u.label" }}','{{ index .Translations "settings.menu.m3u.footnote" }}','{{ .Data.M3U }}');">
+            <label>{{ index .Translations "settings.menu.m3u.edit" }}</label>
+            {{ if .Data.ReloadChannelsActive }}
+            <label2>{{ .Data.M3U }}</label2>
+            {{ else }}
+            <label2>{{ index .Translations "settings.menu.m3u.notset" }}</label2>
+            {{ end }}
+            <accessories>
+              <arrow />
+            </accessories>
+          </twoLineMenuItem>
+          <oneLineMenuItem
+              id="reload-channels"
+              accessibilityLabel="{{ index .Translations "settings.menu.m3u.reload" }}"
+              onSelect="reloadChannels();"
+              dimmed="{{ not .Data.ReloadChannelsActive }}">
+            <label>{{ index .Translations "settings.menu.m3u.reload" }}</label>
+            <rightLabel>{{ .Data.ChannelCount }}</rightLabel>
+            <accessories>
+              <arrow />
+            </accessories>
+          </oneLineMenuItem>
+          <oneLineMenuItem
+              id="clear-recent"
+              accessibilityLabel="{{ index .Translations "settings.menu.m3u.clear-recent" }}"
+              {{ if eq .Data.RecentCount 0 -}}
+              dimmed="true"
+              {{ else }}
+              onSelect="callUrlAndUpdatePage('clear-recent', '{{ $.BasePath }}/clear-recent', '{{ $.BasePath }}/settings.xml')"
+              {{- end }}>
+            <label>{{ index .Translations "settings.menu.m3u.clear-recent" }}</label>
+            <rightLabel>{{ .Data.RecentCount }}</rightLabel>
+            <accessories>
+              <arrow />
+            </accessories>
+          </oneLineMenuItem>
+          <oneLineMenuItem
+              id="clear-favorites"
+              accessibilityLabel="{{ index .Translations "settings.menu.m3u.clear-favorites" }}"
+              {{ if eq .Data.FavoritesCount 0 -}}
+              dimmed="true"
+              {{ else }}
+              onSelect="callUrlAndUpdatePage('clear-favorites', '{{ $.BasePath }}/clear-favorites', '{{ $.BasePath }}/settings.xml')"
+              {{- end }}>
+            <label>{{ index .Translations "settings.menu.m3u.clear-favorites" }}</label>
+            <rightLabel>{{ .Data.FavoritesCount }}</rightLabel>
+            <accessories>
+              <arrow />
+            </accessories>
+          </oneLineMenuItem>
+        </items>
+      </menuSection>
+      <menuSection>
+        <header>
+          <horizontalDivider alignment="left">
+            <title>{{ index .Translations "settings.menu.trouble.title" }}</title>
+          </horizontalDivider>
+        </header>
         <items>
           <oneLineMenuItem
-              id="list_0"
-              accessibilityLabel="{{ index .Translations "settings.reload" }}"
-              onSelect="console.log('Option 1 selected'); atv.unloadPage();">
-            <label>{{ index .Translations "settings.reload" }}</label>
+              id="logs"
+              accessibilityLabel="{{ index .Translations "settings.menu.trouble.logs" }}"
+              onSelect="atvutils.loadURL('{{ $.BasePath }}/logs.xml');"
+              dimmed="{{ not .Data.LogsActive }}">
+            <label>{{ index .Translations "settings.menu.trouble.logs" }}</label>
+            <accessories>
+              <arrow />
+            </accessories>
           </oneLineMenuItem>
         </items>
       </menuSection>
     </sections>
   </menu>
-</optionDialog>
+</listWithPreview>
 {{- end }}

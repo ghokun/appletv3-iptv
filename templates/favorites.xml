@@ -6,8 +6,7 @@
           id="{{ .BodyID }}-grid"
           columnCount="3">
         <items>
-          {{ $count := 0 }}
-          {{ range $key, $value := .Data.Channels }}
+          {{ range $value := .Data.FavoriteChannels }}
           <sixteenByNinePoster
               id="{{ $value.ID }}"
               accessibilityLabel="{{ $value.Title }}"
@@ -15,6 +14,7 @@
               onSelect="atvutils.loadURL('{{ $.BasePath }}/channel-options.xml?category={{ $value.CategoryID }}&amp;channel={{ $value.ID }}');"
               onPlay="atvutils.loadURL('{{ $.BasePath }}/player.xml?category={{ $value.CategoryID }}&amp;channel={{ $value.ID }}');">
             <title>{{ if $value.IsFavorite }}⭐ {{ end }}{{ $value.Title }}</title>
+            <subtitle>{{ $value.Category }}</subtitle>
             <image
                 src720="{{ $value.Logo }}"
                 src1080="{{ $value.Logo }}" />

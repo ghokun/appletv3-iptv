@@ -20,4 +20,5 @@
 - [x] Localization
 - [ ] Accesibility labels
 - [ ] EPG support
-- [ ] Inject application icon
+- [ ] Inject application icon
+- [ ] Placeholder icons

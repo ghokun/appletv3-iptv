@@ -805,7 +805,7 @@ if (atv.player) {
     }, 5000);
 
     // Creates a text view that will be overlayed at the top of the video.
-    //TextViewController.initiateView("counter");
+    TextViewController.initiateView("counter");
 
     atv.sessionStorage["already-watched-ad"] = false;
     atv.sessionStorage["in-ad"] = false;
@@ -1312,17 +1312,17 @@ var TextViewController = (function () {
     SetConfig("numberOfSeconds", 0);
 
     // Update the overlay message
-    // var messageTimer = atv.setInterval(__updateMessage, 1000);
-    // SetConfig("messageTimer", messageTimer)
+    var messageTimer = atv.setInterval(__updateMessage, 1000);
+    SetConfig("messageTimer", messageTimer)
 
     // Save the message to config
-    // SetConfig("messageView", message)
+    SetConfig("messageView", message)
 
-    // __updateMessage();
+    __updateMessage();
 
 
     // Add the sub view
-    // viewContainer.subviews = [message];
+    viewContainer.subviews = [message];
 
     // Paint the view on Screen.
     console.log("pushing the image view to screen: ");

@@ -1,0 +1,80 @@
+{{ define "body" -}}
+<listScrollerSplit id="{{ .BodyID }}">
+  <header>
+    <simpleHeader accessibilityLabel="{{ index .Translations "channels.title" }}">
+      <title>{{ index .Translations "channels.title" }}</title>
+    </simpleHeader>
+  </header>
+  <menu>
+    <sections>
+      <menuSection>
+        <header>
+          <textDivider
+              alignment="left"
+              accessibilityLabel="{{ index .Translations "channels.quick.title" }}">
+            <title>{{ index .Translations "channels.quick.title" }}</title>
+          </textDivider>
+        </header>
+        <items>
+          <oneLineMenuItem
+              id="recent"
+              accessibilityLabel="{{ index .Translations "channels.recent.title" }}">
+            <label>{{ index .Translations "channels.recent.title" }}</label>
+            <rightLabel>{{ .Data.GetRecentCount }}</rightLabel>
+            <preview>
+              {{ if not .Data.RecentChannels }}
+              <longDescriptionPreview>
+                <title>{{ index .Translations "channels.recent.empty.title" }}</title>
+                <summary>{{ index .Translations "channels.recent.empty.description" }}</summary>
+                <image>{{ .BasePath }}/assets/images/settings.png</image>
+              </longDescriptionPreview>
+              {{ else }}
+              <link>{{ .BasePath }}/recent.xml</link>
+              {{ end }}
+            </preview>
+          </oneLineMenuItem>
+          <oneLineMenuItem
+              id="favorites"
+              accessibilityLabel="{{ index .Translations "channels.favorites.title" }}">
+            <label>{{ index .Translations "channels.favorites.title" }}</label>
+            <rightLabel>{{ .Data.GetFavoritesCount }}</rightLabel>
+            <preview>
+              {{ if not .Data.FavoriteChannels }}
+              <longDescriptionPreview>
+                <title>{{ index .Translations "channels.favorites.empty.title" }}</title>
+                <summary>{{ index .Translations "channels.favorites.empty.description" }}</summary>
+                <image>{{ .BasePath }}/assets/images/settings.png</image>
+              </longDescriptionPreview>
+              {{ else }}
+              <link>{{ .BasePath }}/favorites.xml</link>
+              {{ end }}
+            </preview>
+          </oneLineMenuItem>
+        </items>
+      </menuSection>
+      <menuSection>
+        <header>
+          <textDivider
+              alignment="left"
+              accessibilityLabel="{{ index .Translations "channels.categories.title" }}">
+            <title>{{ index .Translations "channels.categories.title" }}</title>
+          </textDivider>
+        </header>
+        <items>
+          {{ range $key, $value := .Data.Categories }}
+          <oneLineMenuItem
+              id="{{ $key }}"
+              accessibilityLabel="{{ $value.Name }}">
+            <label>{{ $value.Name }}</label>
+            <rightLabel>{{ len $value.Channels }}</rightLabel>
+            <preview>
+              <link>{{ $.BasePath }}/category.xml?category={{ $key }}</link>
+            </preview>
+          </oneLineMenuItem>
+          {{- end }}
+        </items>
+      </menuSection>
+    </sections>
+  </menu>
+</listScrollerSplit>
+{{- end }}

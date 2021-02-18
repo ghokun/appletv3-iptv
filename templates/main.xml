@@ -1,23 +1,18 @@
 {{ define "body" -}}
 <viewWithNavigationBar
     id="{{ .BodyID }}"
-    onNavigate="handleNavbarNavigate( event )">
+    onNavigate="handleNavbarNavigate( event )"
+    volatile="true" onVolatileReload="updatePage('{{ $.BasePath }}');">
   <navigation currentIndex="0">
-    <navigationItem id="recent">
-      <title>{{ index .Translations "main.recent" }}</title>
-      <url>{{ .BasePath }}/recent.xml</url>
+    <navigationItem id="channels" accessibilityLabel="{{ index .Translations "main.channels" }}">
+      <title>{{ index .Translations "main.channels" }}</title>
+      <url>{{ .BasePath }}/channels.xml</url>
     </navigationItem>
-    <navigationItem id="search">
+    <navigationItem id="search" accessibilityLabel="{{ index .Translations "main.search" }}">
       <title>{{ index .Translations "main.search" }}</title>
       <url>{{ .BasePath }}/search.xml</url>
     </navigationItem>
-    {{ range $key, $value := .Data.Categories }}
-    <navigationItem id="{{ $key }}">
-      <title>{{ $value.Name }}</title>
-      <url>{{ $.BasePath }}/category.xml?category={{ $key }}</url>
-    </navigationItem>
-    {{- end }}
-    <navigationItem id="settings">
+    <navigationItem id="settings" accessibilityLabel="{{ index .Translations "main.settings" }}">
       <title>{{ index .Translations "main.settings" }}</title>
       <url>{{ .BasePath }}/settings.xml</url>
     </navigationItem>

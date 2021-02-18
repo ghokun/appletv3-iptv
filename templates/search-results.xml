@@ -1,5 +1,4 @@
-{{ define "body" -}}
-<searchResults id="{{ .BodyID }}">
+{{ define "body" -}}<searchResults id="{{ .BodyID }}">
   <menu>
     <sections>
       {{ range $key, $value := .Data.Categories }}
@@ -16,9 +15,9 @@
           <posterMenuItem
               id="{{ $subValue.ID }}"
               accessibilityLabel="{{ $subValue.Title }}"
-              onSelect="atvutils.loadURL('{{ $.BasePath }}/player.xml?category={{ $subValue.CategoryID }}&amp;channel={{ $subValue.ID }}');"
+              onSelect="atvutils.loadURL('{{ $.BasePath }}/channel-options.xml?category={{ $subValue.CategoryID }}&amp;channel={{ $subValue.ID }}');"
               onPlay="atvutils.loadURL('{{ $.BasePath }}/player.xml?category={{ $subValue.CategoryID }}&amp;channel={{ $subValue.ID }}');">
-            <label>{{ $subValue.Title }}</label>
+            <label>{{ if $subValue.IsFavorite }}⭐ {{ end }}{{ $subValue.Title }}</label>
             <label2>{{ $subValue.Category }}</label2>
             <image>{{ $subValue.Logo }}</image>
           </posterMenuItem>
@@ -28,5 +27,4 @@
       {{- end }}
     </sections>
   </menu>
-</searchResults>
-{{- end }}
+</searchResults>{{- end }}
