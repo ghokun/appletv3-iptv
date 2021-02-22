@@ -6,7 +6,7 @@
           id="{{ .BodyID }}-grid"
           columnCount="3">
         <items>
-          {{ range $value := .Data.RecentChannels }}
+          {{ range $value := .Data.GetRecentChannels }}
           <sixteenByNinePoster
               id="{{ $value.ID }}"
               accessibilityLabel="{{ $value.Title }}"

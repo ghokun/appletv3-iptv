@@ -21,14 +21,14 @@
     <oneLineMenuItem
         id="toggle-favorite"
         accessibilityLabel="{{ index .Translations "channel.options.rm-from-fav" }}"
-        onSelect="callUrlAndUnload('{{ $.BasePath }}/toggle-favorite?category={{ .Data.CategoryID }}&amp;channel={{ .Data.ID }}');">
+        onSelect="callUrlAndUnload('{{ $.BasePath }}/toggle-favorite.xml?category={{ .Data.CategoryID }}&amp;channel={{ .Data.ID }}', 'POST');">
       <label>{{ index .Translations "channel.options.rm-from-fav" }}</label>
     </oneLineMenuItem>
     {{- else -}}
     <oneLineMenuItem
         id="toggle-favorite"
         accessibilityLabel="{{ index .Translations "channel.options.add-to-fav" }}"
-        onSelect="callUrlAndUnload('{{ $.BasePath }}/toggle-favorite?category={{ .Data.CategoryID }}&amp;channel={{ .Data.ID }}');">
+        onSelect="callUrlAndUnload('{{ $.BasePath }}/toggle-favorite.xml?category={{ .Data.CategoryID }}&amp;channel={{ .Data.ID }}', 'POST');">
       <label>{{ index .Translations "channel.options.add-to-fav" }}</label>
     </oneLineMenuItem>
     {{- end -}}

@@ -13,168 +13,24 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/ghokun/appletv3-iptv/internal/config"
 	"github.com/nfnt/resize"
 )
 
-// Playlist struct defines a M3U playlist. M3U playlist starts with #EXTM3U line.
-// It also holds recently played channels
-type Playlist struct {
-	Categories map[string]Category
-}
-
-func (playlist *Playlist) RecentChannels() (recentChannels []Channel) {
-	if singleton == nil {
-		return nil
-	}
-	recentCount := GetPlaylist().GetRecentCount()
-	if recentCount == 0 {
-		return nil
-	}
-	recentChannels = make([]Channel, recentCount)
-	for _, category := range singleton.Categories {
-		for _, channel := range category.Channels {
-			if channel.IsRecent {
-				recentChannels[channel.RecentOrdinal-1] = channel
-			}
-		}
-	}
-	return
-}
-
-func (playlist *Playlist) SetRecentChannel(selectedChannel Channel) {
-
-	for _, channel := range GetPlaylist().RecentChannels() {
-		if selectedChannel.IsRecent {
-			if channel.ID != selectedChannel.ID && selectedChannel.RecentOrdinal > channel.RecentOrdinal {
-				channel.RecentOrdinal++
-			}
-		} else {
-			channel.RecentOrdinal++
-		}
-		GetPlaylist().Categories[channel.CategoryID].Channels[channel.ID] = channel
-	}
-	selectedChannel.RecentOrdinal = 1
-	selectedChannel.IsRecent = true
-	GetPlaylist().Categories[selectedChannel.CategoryID].Channels[selectedChannel.ID] = selectedChannel
-}
-
-func (playlist *Playlist) ClearRecentChannels() {
-	for _, channel := range GetPlaylist().RecentChannels() {
-		channel.IsRecent = false
-		GetPlaylist().Categories[channel.CategoryID].Channels[channel.ID] = channel
-	}
-}
-
-func (playlist *Playlist) FavoriteChannels() (favoriteChannels []Channel) {
-	if singleton == nil {
-		return nil
-	}
-	for _, category := range GetPlaylist().Categories {
-		for _, channel := range category.Channels {
-			if channel.IsFavorite {
-				favoriteChannels = append(favoriteChannels, channel)
-			}
-		}
-	}
-	return
-}
-
-func (playlist *Playlist) ClearFavoriteChannels() {
-	for _, channel := range GetPlaylist().FavoriteChannels() {
-		channel.IsFavorite = false
-		GetPlaylist().Categories[channel.CategoryID].Channels[channel.ID] = channel
-	}
-}
-
-func (playlist *Playlist) GetChannelCount() (count int) {
-	count = 0
-	if singleton == nil {
-		return
-	}
-	for _, category := range singleton.Categories {
-		count += len(category.Channels)
-	}
-	return
-}
-
-func (playlist *Playlist) GetRecentCount() (count int) {
-	count = 0
-	if singleton == nil {
-		return
-	}
-	for _, category := range singleton.Categories {
-		for _, channel := range category.Channels {
-			if channel.IsRecent {
-				count++
-			}
-		}
-	}
-	return
-}
-
-func (playlist *Playlist) GetFavoritesCount() (count int) {
-	count = 0
-	if singleton == nil {
-		return
-	}
-	for _, category := range singleton.Categories {
-		for _, channel := range category.Channels {
-			if channel.IsFavorite {
-				count++
-			}
-		}
-	}
-	return
-}
-
-// Category in a M3U playlist, group-title attribute.
-// Default value is Uncategorized.
-type Category struct {
-	ID       string
-	Name     string
-	Channels map[string]Channel
-}
-
-// Channel is a TV channel in an M3U playlist. Starts with #EXTINF:- prefix.
-// #EXTINF:-1 tvg-id="" tvg-name="" tvg-country="" tvg-language="" tvg-logo="" tvg-url="" group-title="",Channel Name
-// https://channel.url/stream.m3u8
-type Channel struct {
-	ID            string // tvg-id or .Title. Spaces are replaced with underscore.
-	Title         string // Channel title, after comma
-	MediaURL      string // Second line after #EXTINF:-...
-	Logo          string // tvg-logo or placeholder. 16x9 aspect ratio
-	Description   string // TODO will be used for EPG implementation
-	Category      string // group-title or Uncategorized
-	CategoryID    string // For link generation purposes
-	IsRecent      bool
-	RecentOrdinal int
-	IsFavorite    bool
-}
-
 var (
 	singleton *Playlist
-	M3UFile   *string
 )
 
 // GeneratePlaylist takes an m3u playlist and creates Playlists.
-func GeneratePlaylist(fileName string) (err error) {
-	playlist, err := ParseM3U(fileName)
-	M3UFile = &fileName
+func GeneratePlaylist() (err error) {
+	playlist, err := ParseM3U(config.Current.M3UPath)
 	singleton = &playlist
 	return
-}
-
-func ReloadChannels() (err error) {
-	return GeneratePlaylist(*M3UFile)
 }
 
 // GetPlaylist returns singleton
 func GetPlaylist() *Playlist {
 	return singleton
-}
-
-func SetM3UFile(filename string) {
-	M3UFile = &filename
 }
 
 // ParseM3U parses an m3u list.

@@ -57,10 +57,10 @@ function handleNavbarNavigate(event) {
   }
 }
 
-function callUrlAndUnload(url) {
+function callUrlAndUnload(url, method) {
   ajax = new ATVUtils.Ajax({
     "url": url,
-    "method": "GET",
+    "method": method,
     "success": function (xhr) {
       atv.unloadPage();
     },
@@ -70,25 +70,38 @@ function callUrlAndUnload(url) {
   });
 }
 
-function callUrlAndUpdatePage(id, url, update) {
-  var elem = document.getElementById(id);
+function addSpinner(elem) {
   var elem_add = document.makeElementNamed("spinner");
   elem.getElementByTagName("accessories").appendChild(elem_add);
+}
+
+function removeSpinner(elem) {
+  var elem_remove = elem.getElementByTagName("accessories").getElementByTagName("spinner");
+  if (elem_remove) elem_remove.removeFromParent();
+}
+
+function callUrlAndUpdateElement(id, url, method) {
+  element = document.getElementById(id);
+  rightLabel = element.getElementByTagName("rightLabel");
+  if (rightLabel.textContent == '0') {
+    return;
+  }
+  addSpinner(element);
   ajax = new ATVUtils.Ajax({
     "url": url,
-    "method": "GET",
+    "method": method,
     "success": function (xhr) {
-      var req = new XMLHttpRequest();
-      req.onreadystatechange = function () {
-        if (req.readyState == 4) {
-          var doc = req.responseXML;
-          atv.loadAndSwapXML(doc);
-        }
-      };
-      req.open('GET', update, false);
-      req.send();
+      removeSpinner(element);
+      var doc = xhr.responseXML;
+      newElement = doc.getElementById(id);
+      rightLabel.textContent = newElement.getElementByTagName("rightLabel").textContent;
+      if (rightLabel.textContent == '0') {
+        element.setAttribute("dimmed", "true");
+      }
     },
     "failure": function (status, xhr) {
+      removeSpinner(element);
+      rightLabel.textContent = '⚠️';
     }
   });
 }
@@ -106,36 +119,18 @@ function editM3UAddress(title, instructions, label, footnote, defaultValue) {
   var label2 = document.getElementById("edit-m3u").getElementByTagName('label2');
   textEntry.onSubmit = function (value) {
     ajax = new ATVUtils.Ajax({
-      "url": "https://appletv.redbull.tv/set-m3u",
+      "url": "https://appletv.redbull.tv/set-m3u.xml?m3u=" + value,
       "method": "POST",
-      "data": { "newFile": value },
       "success": function (xhr) {
-        label2.textContent = xhr.responseXML
+        label2.textContent = value;
       },
       "failure": function (status, xhr) {
-        label2.textContent = status
+        label2.textContent = status;
       }
     });
   }
   textEntry.onCancel = function () {
-    label2.textContent = defaultValue
+    label2.textContent = defaultValue;
   }
   textEntry.show();
-}
-
-
-function reloadChannels() {
-  var elem = document.getElementById("reload");
-  var elem_add = document.makeElementNamed("spinner");
-  elem.getElementByTagName("accessories").appendChild(elem_add);
-
-  var request = new XMLHttpRequest();
-  request.onreadystatechange = function () {
-    if (request.readyState == 4 && request.status == 200) {
-      var elem_remove = elem.getElementByTagName("accessories").getElementByTagName("spinner");
-      if (elem_remove) elem_remove.removeFromParent();
-    }
-  };
-  request.open('GET', url);
-  request.send();
 }

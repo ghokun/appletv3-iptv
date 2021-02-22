@@ -20,9 +20,9 @@
               id="recent"
               accessibilityLabel="{{ index .Translations "channels.recent.title" }}">
             <label>{{ index .Translations "channels.recent.title" }}</label>
-            <rightLabel>{{ .Data.GetRecentCount }}</rightLabel>
+            <rightLabel>{{ .Data.GetRecentChannelsCount }}</rightLabel>
             <preview>
-              {{ if not .Data.RecentChannels }}
+              {{ if not .Data.GetRecentChannels }}
               <longDescriptionPreview>
                 <title>{{ index .Translations "channels.recent.empty.title" }}</title>
                 <summary>{{ index .Translations "channels.recent.empty.description" }}</summary>
@@ -37,9 +37,9 @@
               id="favorites"
               accessibilityLabel="{{ index .Translations "channels.favorites.title" }}">
             <label>{{ index .Translations "channels.favorites.title" }}</label>
-            <rightLabel>{{ .Data.GetFavoritesCount }}</rightLabel>
+            <rightLabel>{{ .Data.GetFavoriteChannelsCount }}</rightLabel>
             <preview>
-              {{ if not .Data.FavoriteChannels }}
+              {{ if not .Data.GetFavoriteChannels }}
               <longDescriptionPreview>
                 <title>{{ index .Translations "channels.favorites.empty.title" }}</title>
                 <summary>{{ index .Translations "channels.favorites.empty.description" }}</summary>

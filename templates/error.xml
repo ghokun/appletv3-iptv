@@ -1,6 +1,6 @@
 {{ define "body" -}}
 <dialog id="{{ .BodyID }}">
-  <title>{{ .Title }}</title>
-  <description>{{ .Description }}</description>
+  <title>{{ .Data.Title }}</title>
+  <description>{{ .Data.Description }}</description>
 </dialog>
 {{- end }}

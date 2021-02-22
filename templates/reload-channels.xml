@@ -1,0 +1,22 @@
+{{ define "body" -}}
+<optionList
+    id="{{ .BodyID }}"
+    autoSelectSingleItem="false">
+  <title>{{ index .Translations "settings.menu.m3u.reload.title" }}</title>
+  <footnote>{{ index .Translations "settings.menu.m3u.reload.footnote" }}</footnote>
+  <items>
+    <oneLineMenuItem
+        id="yes"
+        accessibilityLabel="{{ index .Translations "settings.menu.m3u.reload.yes" }}"
+        onSelect="callUrlAndUnload('{{ $.BasePath }}/reload-channels.xml', 'POST');">
+      <label>{{ index .Translations "settings.menu.m3u.reload.yes" }}</label>
+    </oneLineMenuItem>
+    <oneLineMenuItem
+        id="no"
+        accessibilityLabel="{{ index .Translations "settings.menu.m3u.reload.no" }}"
+        onSelect="atv.unloadPage();">
+      <label>{{ index .Translations "settings.menu.m3u.reload.no" }}</label>
+    </oneLineMenuItem>
+  </items>
+</optionList>
+{{- end }}

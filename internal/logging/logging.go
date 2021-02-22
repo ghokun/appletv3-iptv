@@ -6,11 +6,11 @@ import (
 	"os"
 	"path"
 	"time"
+
+	"github.com/ghokun/appletv3-iptv/internal/config"
 )
 
 var (
-	logToFile         bool
-	loggingPath       string
 	latestLogFilePath string
 	logFile           *os.File
 	Logger            *log.Logger
@@ -20,13 +20,11 @@ func init() {
 	Logger = log.New(os.Stdout, "", log.LstdFlags|log.Lshortfile)
 }
 
-func EnableLoggingToFile(loggingPathPtr *string) {
-	logToFile = true
-	loggingPath = *loggingPathPtr
+func EnableLoggingToFile() {
 	t := time.Now().Format("2006-01-02")
-	latestLogFilePath = path.Join(loggingPath, t+".log")
-	err := os.Mkdir(loggingPath, os.ModePerm)
-	logFile, err := os.OpenFile(latestLogFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	latestLogFilePath = path.Join(config.Current.LoggingPath, t+".log")
+	err := os.Mkdir(config.Current.LoggingPath, os.ModePerm)
+	logFile, err := os.OpenFile(latestLogFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,17 +33,17 @@ func EnableLoggingToFile(loggingPathPtr *string) {
 }
 
 func CheckLogRotationAndRotate() {
-	if !logToFile {
+	if !config.Current.LogToFile {
 		return
 	}
 	t := time.Now().Format("2006-01-02")
-	newLogFilePath := path.Join(loggingPath, t+".log")
+	newLogFilePath := path.Join(config.Current.LoggingPath, t+".log")
 
 	if latestLogFilePath != newLogFilePath {
 		Logger.Println("Rotating log file")
 		logFile.Close()
-		err := os.Mkdir(loggingPath, os.ModePerm)
-		logFile, err := os.OpenFile(newLogFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		err := os.Mkdir(config.Current.LoggingPath, os.ModePerm)
+		logFile, err := os.OpenFile(newLogFilePath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0664)
 		if err != nil {
 			panic(err)
 		}

@@ -3,7 +3,8 @@
     id="{{ .BodyID }}"
     onNavigate="handleNavbarNavigate( event )"
     volatile="true" onVolatileReload="updatePage('{{ $.BasePath }}');">
-  <navigation currentIndex="0">
+    <navigation currentIndex="0">
+    {{ if gt .Data 0 -}}
     <navigationItem id="channels" accessibilityLabel="{{ index .Translations "main.channels" }}">
       <title>{{ index .Translations "main.channels" }}</title>
       <url>{{ .BasePath }}/channels.xml</url>
@@ -12,6 +13,7 @@
       <title>{{ index .Translations "main.search" }}</title>
       <url>{{ .BasePath }}/search.xml</url>
     </navigationItem>
+    {{- end }}
     <navigationItem id="settings" accessibilityLabel="{{ index .Translations "main.settings" }}">
       <title>{{ index .Translations "main.settings" }}</title>
       <url>{{ .BasePath }}/settings.xml</url>

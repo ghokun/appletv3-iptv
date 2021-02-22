@@ -1,0 +1,10 @@
+m3uPath: a.m3u
+httpPort: "80"
+httpsPort: "443"
+cerPath: certs/redbulltv.cer
+pemPath: certs/redbulltv.pem
+keyPath: certs/redbulltv.key
+logToFile: true
+loggingPath: log
+favorites: []
+]

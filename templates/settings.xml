@@ -33,10 +33,10 @@
           <twoLineMenuItem
               id="edit-m3u"
               accessibilityLabel="{{ index .Translations "settings.menu.m3u.edit" }}"
-              onSelect="editM3UAddress('{{ index .Translations "settings.menu.m3u.edit" }}','{{ index .Translations "settings.menu.m3u.instructions" }}','{{ index .Translations "settings.menu.m3u.label" }}','{{ index .Translations "settings.menu.m3u.footnote" }}','{{ .Data.M3U }}');">
+              onSelect="editM3UAddress('{{ index .Translations "settings.menu.m3u.edit" }}','{{ index .Translations "settings.menu.m3u.instructions" }}','{{ index .Translations "settings.menu.m3u.label" }}','{{ index .Translations "settings.menu.m3u.footnote" }}','{{ .Data.M3UPath }}');">
             <label>{{ index .Translations "settings.menu.m3u.edit" }}</label>
             {{ if .Data.ReloadChannelsActive }}
-            <label2>{{ .Data.M3U }}</label2>
+            <label2>{{ .Data.M3UPath }}</label2>
             {{ else }}
             <label2>{{ index .Translations "settings.menu.m3u.notset" }}</label2>
             {{ end }}
@@ -47,7 +47,7 @@
           <oneLineMenuItem
               id="reload-channels"
               accessibilityLabel="{{ index .Translations "settings.menu.m3u.reload" }}"
-              onSelect="reloadChannels();"
+              onSelect="atvutils.loadURL('{{ $.BasePath }}/reload-channels.xml');"
               dimmed="{{ not .Data.ReloadChannelsActive }}">
             <label>{{ index .Translations "settings.menu.m3u.reload" }}</label>
             <rightLabel>{{ .Data.ChannelCount }}</rightLabel>
@@ -60,9 +60,8 @@
               accessibilityLabel="{{ index .Translations "settings.menu.m3u.clear-recent" }}"
               {{ if eq .Data.RecentCount 0 -}}
               dimmed="true"
-              {{ else }}
-              onSelect="callUrlAndUpdatePage('clear-recent', '{{ $.BasePath }}/clear-recent', '{{ $.BasePath }}/settings.xml')"
-              {{- end }}>
+              {{ end }}
+              onSelect="callUrlAndUpdateElement('clear-recent', '{{ $.BasePath }}/clear-recent.xml', 'POST');">
             <label>{{ index .Translations "settings.menu.m3u.clear-recent" }}</label>
             <rightLabel>{{ .Data.RecentCount }}</rightLabel>
             <accessories>
@@ -74,9 +73,8 @@
               accessibilityLabel="{{ index .Translations "settings.menu.m3u.clear-favorites" }}"
               {{ if eq .Data.FavoritesCount 0 -}}
               dimmed="true"
-              {{ else }}
-              onSelect="callUrlAndUpdatePage('clear-favorites', '{{ $.BasePath }}/clear-favorites', '{{ $.BasePath }}/settings.xml')"
-              {{- end }}>
+              {{ end }}
+              onSelect="callUrlAndUpdateElement('clear-favorites', '{{ $.BasePath }}/clear-favorites.xml', 'POST')">
             <label>{{ index .Translations "settings.menu.m3u.clear-favorites" }}</label>
             <rightLabel>{{ .Data.FavoritesCount }}</rightLabel>
             <accessories>
