@@ -1,0 +1,7 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="1" tvg-logo="" tvg-url="" group-title="News",Channel 1
+https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8
+#EXTINF:-2 tvg-id="2" tvg-logo="" tvg-url="" group-title="Kids",Channel 2
+https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8
+#EXTINF:-3 tvg-id="3" tvg-logo="" tvg-url="" group-title="Documentary",Channel 3
+https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8
