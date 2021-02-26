@@ -6,7 +6,7 @@
     <mediaURL>{{ .Data.MediaURL }}</mediaURL>
     <title>{{ .Data.Title }}</title>
     <description>{{ .Data.Description }}</description>
-    <image src720="{{ .Data.Logo }}" src1080="{{ .Data.Logo }}" />
+    <image src720="{{ $.BasePath }}{{ .Data.Logo }}" src1080="{{ $.BasePath }}{{ .Data.Logo }}" />
   </httpLiveStreamingVideoAsset>
 </videoPlayer>
 {{- end }}

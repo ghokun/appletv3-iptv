@@ -4,17 +4,13 @@ import (
 	"bufio"
 	"encoding/hex"
 	"errors"
-	"image"
-	"image/jpeg"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"regexp"
 	"strings"
 
 	"github.com/ghokun/appletv3-iptv/internal/config"
-	"github.com/nfnt/resize"
 )
 
 var (
@@ -75,6 +71,7 @@ func ParseM3U(fileNameOrURL string) (playlist Playlist, err error) {
 			attributes := channelInfo[0]
 			title := channelInfo[1]
 			category, id, logo, description := parseAttributes(attributes, title)
+			err = cacheChannelLogo(id, logo)
 			categoryID := hex.EncodeToString([]byte(category))
 			// Next line is m3u8 url
 			scanner.Scan()
@@ -132,36 +129,6 @@ func parseAttributes(attributes string, title string) (category string, id strin
 			description = tagValue
 		}
 	}
-	id = strings.ReplaceAll(id, " ", "_")
 	id = hex.EncodeToString([]byte(id))
-	// Cache logo
-	_ = os.Mkdir(".cache", os.ModePerm)
-	_ = os.Mkdir(".cache/logo", os.ModePerm)
-
-	// Get
-	if logo != "" {
-
-		response, err := http.Get(logo)
-		if err != nil {
-			log.Println(err)
-		}
-		if response != nil && response.Body != nil {
-			defer response.Body.Close()
-		}
-		// Create file
-		logo = ".cache/logo/" + id + ".png"
-		file, err := os.Create(logo)
-		if err != nil {
-			log.Fatal(err)
-		}
-		logo = "https://appletv.redbull.tv/logo/" + id + ".png"
-		defer file.Close()
-
-		image, _, err := image.Decode(response.Body)
-		if err == nil {
-			newImage := resize.Resize(160, 90, image, resize.Lanczos3)
-			err = jpeg.Encode(file, newImage, nil)
-		}
-	}
-	return
+	return category, id, logo, description
 }

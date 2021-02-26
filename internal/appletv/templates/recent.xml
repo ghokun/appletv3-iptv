@@ -16,8 +16,8 @@
             <title>{{ if $value.IsFavorite }}⭐ {{ end }}{{ $value.Title }}</title>
             <subtitle>{{ $value.Category }}</subtitle>
             <image
-                src720="{{ $value.Logo }}"
-                src1080="{{ $value.Logo }}" />
+                src720="{{ $.BasePath }}{{ $value.Logo }}"
+                src1080="{{ $.BasePath }}{{ $value.Logo }}" />
             <ordinal>{{ $value.RecentOrdinal }}</ordinal>
             <defaultImage>{{ $.BasePath }}/assets/images/16x9.png</defaultImage>
           </sixteenByNinePoster>

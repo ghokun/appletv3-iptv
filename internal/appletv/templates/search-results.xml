@@ -19,7 +19,7 @@
               onPlay="atvutils.loadURL('{{ $.BasePath }}/player.xml?category={{ $subValue.CategoryID }}&amp;channel={{ $subValue.ID }}');">
             <label>{{ if $subValue.IsFavorite }}⭐ {{ end }}{{ $subValue.Title }}</label>
             <label2>{{ $subValue.Category }}</label2>
-            <image>{{ $subValue.Logo }}</image>
+            <image>{{ $.BasePath }}{{ $subValue.Logo }}</image>
           </posterMenuItem>
           {{- end }}
         </items>

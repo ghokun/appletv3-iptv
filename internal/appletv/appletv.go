@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path"
+	"strconv"
 	"time"
 
 	"github.com/ghokun/appletv3-iptv/internal/config"
@@ -13,6 +14,7 @@ import (
 )
 
 func errorHandler(w http.ResponseWriter, r *http.Request, err error) {
+	logging.Warn("Error at " + r.RequestURI + ". With details: " + err.Error())
 	GenerateErrorXML(w, r, ErrorData{
 		Title:       "Error",
 		Description: err.Error(),
@@ -167,6 +169,7 @@ func SetM3UHandler(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		newM3UPath := r.URL.Query().Get("m3u")
 		config.SaveM3UPath(newM3UPath)
+		logging.Info("Setting M3U address to: " + newM3UPath)
 		http.Redirect(w, r, "/settings.xml", http.StatusSeeOther)
 	default:
 		unsupportedOperationHandler(w, r)
@@ -179,6 +182,10 @@ func ReloadChannelsHandler(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 		GenerateXML(w, r, "templates/reload-channels.xml", nil)
 	case "POST":
+		logging.Info("Reloading channels...")
+		logging.Info("Previous channel count is: " + strconv.Itoa(m3u.GetPlaylist().GetChannelsCount()))
+		logging.Info("Previous recent channel count is: " + strconv.Itoa(m3u.GetPlaylist().GetRecentChannelsCount()))
+		logging.Info("Previous favorite count is: " + strconv.Itoa(m3u.GetPlaylist().GetFavoriteChannelsCount()))
 		recentChannels := m3u.GetPlaylist().GetRecentChannels()
 		favoriteChannels := m3u.GetPlaylist().GetFavoriteChannels()
 		err := m3u.GeneratePlaylist()
@@ -198,6 +205,10 @@ func ReloadChannelsHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			errorHandler(w, r, err)
 		}
+		logging.Info("Reloaded channels.")
+		logging.Info("Channel count after reload is: " + strconv.Itoa(m3u.GetPlaylist().GetChannelsCount()))
+		logging.Info("Recent Channel count after reload is: " + strconv.Itoa(m3u.GetPlaylist().GetRecentChannelsCount()))
+		logging.Info("Favorite Channel count after reload is: " + strconv.Itoa(m3u.GetPlaylist().GetFavoriteChannelsCount()))
 	default:
 		unsupportedOperationHandler(w, r)
 	}
@@ -208,6 +219,7 @@ func ClearRecentHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
 		m3u.GetPlaylist().ClearRecentChannels()
+		logging.Info("Cleared recently watched channels.")
 		http.Redirect(w, r, "/settings.xml", http.StatusSeeOther)
 	default:
 		unsupportedOperationHandler(w, r)
@@ -219,6 +231,7 @@ func ClearFavoritesHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
 		m3u.GetPlaylist().ClearFavoriteChannels()
+		logging.Info("Cleared favorite channels.")
 		http.Redirect(w, r, "/settings.xml", http.StatusSeeOther)
 	default:
 		unsupportedOperationHandler(w, r)

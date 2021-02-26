@@ -1,4 +1,4 @@
-m3uPath: a.m3u
+m3uPath: b.m3u
 httpPort: "80"
 httpsPort: "443"
 cerPath: certs/redbulltv.cer
@@ -7,4 +7,3 @@ keyPath: certs/redbulltv.key
 logToFile: true
 loggingPath: log
 favorites: []
-]

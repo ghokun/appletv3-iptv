@@ -1,9 +1,9 @@
 package appletv
 
 import (
+	"embed"
 	"encoding/json"
 	"net/http"
-	"os"
 	"text/template"
 
 	"github.com/ghokun/appletv3-iptv/internal/config"
@@ -48,9 +48,12 @@ type SettingsData struct {
 	LogsActive           bool
 }
 
+//go:embed templates
+var templates embed.FS
+
 // GenerateXML : Parses base XML with given template
 func GenerateXML(w http.ResponseWriter, r *http.Request, templateName string, data interface{}) {
-	template, err := template.ParseFiles(baseXML, templateName)
+	template, err := template.ParseFS(templates, baseXML, templateName)
 	if err != nil {
 		logging.Warn(err)
 		GenerateErrorXML(w, r, ErrorData{
@@ -61,7 +64,7 @@ func GenerateXML(w http.ResponseWriter, r *http.Request, templateName string, da
 	}
 	accept := r.Header.Get("Accept-Language")
 	tag, _ := language.MatchStrings(matcher, accept)
-	file, err := os.Open("templates/locales/" + tag.String() + ".json")
+	file, err := templates.ReadFile("templates/locales/" + tag.String() + ".json")
 	if err != nil {
 		logging.Warn(err)
 		GenerateErrorXML(w, r, ErrorData{
@@ -70,9 +73,8 @@ func GenerateXML(w http.ResponseWriter, r *http.Request, templateName string, da
 		})
 		return
 	}
-	defer file.Close()
 	var translations map[string]string
-	if err := json.NewDecoder(file).Decode(&translations); err != nil {
+	if err := json.Unmarshal(file, &translations); err != nil {
 		logging.Warn(err)
 		GenerateErrorXML(w, r, ErrorData{
 			Title:       "Translation Decode Error",
@@ -100,7 +102,7 @@ func GenerateXML(w http.ResponseWriter, r *http.Request, templateName string, da
 
 // GenerateErrorXML : If this fails application should stop.
 func GenerateErrorXML(w http.ResponseWriter, r *http.Request, errorData ErrorData) {
-	template, err := template.ParseFiles(errorXML)
+	template, err := template.ParseFS(templates, errorXML)
 	if err != nil {
 		logging.Fatal(err)
 	}
