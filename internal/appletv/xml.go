@@ -18,6 +18,9 @@ const (
 	errorXML = "templates/error.xml"
 )
 
+//go:embed templates
+var templates embed.FS
+
 var matcher = language.NewMatcher([]language.Tag{
 	language.AmericanEnglish,
 	language.Turkish,
@@ -47,9 +50,6 @@ type SettingsData struct {
 	FavoritesCount       int
 	LogsActive           bool
 }
-
-//go:embed templates
-var templates embed.FS
 
 // GenerateXML : Parses base XML with given template
 func GenerateXML(w http.ResponseWriter, r *http.Request, templateName string, data interface{}) {

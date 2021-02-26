@@ -2,7 +2,9 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/ghokun/appletv3-iptv/internal/config"
 	"github.com/ghokun/appletv3-iptv/internal/logging"
@@ -13,7 +15,13 @@ import (
 func main() {
 
 	configFilePtr := flag.String("config", "config.yaml", "Config file path")
+	versionPtr := flag.Bool("v", false, "prints current application version")
 	flag.Parse()
+
+	if *versionPtr {
+		fmt.Println(config.Version)
+		os.Exit(0)
+	}
 
 	err := config.LoadConfig(*configFilePtr)
 	if err != nil {

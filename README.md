@@ -36,30 +36,12 @@ Code parts or ideas are taken from following repositories:
 - https://github.com/wahlmanj/sample-aTV
 - https://github.com/jamesnetherton/m3u
 
-## TASKS
-- [x] Certificate generation
-- [x] Intercept redbulltv
-- [x] Profile installation
-- [x] Parse m3u files
-- [x] Play m3u8 files
-- [x] Category and Channel images
-- [x] Cache assets
-- [x] Logger
-- [x] Refresh m3u file from UI
-- [x] Recently Played, 10 items
-- [x] Search channels
-- [x] Better templates
-- [x] Localization
-- [x] Accesibility labels
-- [x] Cleanup and document go files
-- [ ] Generate README
-- [ ] Generate images for missing ones
+## Tasks
 - [ ] GitHub actions to autorelease
-- [ ] EPG support
-- [ ] Inject application icon
 - [ ] Placeholder icons
 - [ ] Cleanup javascript files
 - [ ] Save favorites and recents to file
-- [x] Embed files
-- [ ] Prevent Apple TV software update
 - [ ] Include DNS server
+- [ ] Prevent Apple TV software update
+- [ ] Inject application icon
+- [ ] EPG support
