@@ -19,12 +19,12 @@ type Config struct {
 	Favorites   []string `yaml:"favorites"`
 }
 
-// Version - Application version.
-const Version = "0.1.0"
-
 // Current - Global configuration variable.
-var Current *Config
-var currentConfigFile *string
+var (
+	Current           *Config
+	currentConfigFile *string
+	Version           string
+)
 
 // LoadConfig - Loads configuration file.
 func LoadConfig(configFile string) (err error) {
@@ -67,7 +67,6 @@ func SaveFavorites(newFavorites []string) (err error) {
 	return saveConfig()
 }
 
-//
 func ClearFavorites() (err error) {
 	Current.Favorites = nil
 	return saveConfig()
