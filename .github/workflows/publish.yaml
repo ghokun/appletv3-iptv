@@ -27,4 +27,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          asset_paths: '["./bin/appletv3-iptv*"]'
+          asset_paths: '["bin/appletv3-iptv*"]'
