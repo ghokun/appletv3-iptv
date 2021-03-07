@@ -7,19 +7,11 @@ on:
 
 jobs:
   publish:
-    strategy:
-      matrix:
-        go-version: [1.16.x]
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
         with:
           fetch-depth: 1
-      - name: Install Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
       - name: Make release
         run: make release
       - name: Upload release binaries
@@ -27,4 +19,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          asset_paths: '["bin/appletv3-iptv*"]'
+          asset_paths: '["./bin/appletv3-iptv*"]'
