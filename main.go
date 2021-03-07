@@ -25,7 +25,6 @@ func main() {
 
 	err := config.LoadConfig(*configFilePtr)
 	if err != nil {
-		// Fail early if config file is not found
 		log.Fatal(err)
 	}
 

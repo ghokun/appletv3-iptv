@@ -168,8 +168,12 @@ func SetM3UHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
 		newM3UPath := r.URL.Query().Get("m3u")
-		config.SaveM3UPath(newM3UPath)
-		logging.Info("Setting M3U address to: " + newM3UPath)
+		err := config.Current.SaveM3UPath(newM3UPath)
+		if err != nil {
+			logging.Warn("Error while setting M3U address: " + err.Error())
+		} else {
+			logging.Info("Setting M3U address to: " + newM3UPath)
+		}
 		http.Redirect(w, r, "/settings.xml", http.StatusSeeOther)
 	default:
 		unsupportedOperationHandler(w, r)

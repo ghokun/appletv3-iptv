@@ -1,7 +1,7 @@
 package config
 
 import (
-	"os"
+	"io/ioutil"
 
 	"gopkg.in/yaml.v3"
 )
@@ -16,25 +16,25 @@ type Config struct {
 	KeyPath     string   `yaml:"keyPath"`
 	LogToFile   bool     `yaml:"logToFile"`
 	LoggingPath string   `yaml:"loggingPath"`
-	Favorites   []string `yaml:"favorites"`
+	Recents     []string `yaml:"recents,flow"`
+	Favorites   []string `yaml:"favorites,flow"`
 }
 
-// Current - Global configuration variable.
 var (
+	// Current - Global configuration variable.
 	Current           *Config
 	currentConfigFile *string
-	Version           string
+	// Version - Set by ldflags
+	Version string
 )
 
 // LoadConfig - Loads configuration file.
 func LoadConfig(configFile string) (err error) {
-	file, err := os.Open(configFile)
+	contents, err := ioutil.ReadFile(configFile)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
-	decoder := yaml.NewDecoder(file)
-	err = decoder.Decode(&Current)
+	err = yaml.Unmarshal(contents, &Current)
 	if err != nil {
 		return err
 	}
@@ -42,13 +42,12 @@ func LoadConfig(configFile string) (err error) {
 	return nil
 }
 
-func saveConfig() (err error) {
-	file, err := os.OpenFile(*currentConfigFile, os.O_RDWR|os.O_CREATE, 0644)
+func saveConfig(config *Config) (err error) {
+	contents, err := yaml.Marshal(&config)
 	if err != nil {
 		return err
 	}
-	encoder := yaml.NewEncoder(file)
-	err = encoder.Encode(&Current)
+	err = ioutil.WriteFile(*currentConfigFile, contents, 0644)
 	if err != nil {
 		return err
 	}
@@ -56,18 +55,31 @@ func saveConfig() (err error) {
 }
 
 // SaveM3UPath - Edits M3U path and saves to configuration file.
-func SaveM3UPath(newM3UPath string) (err error) {
-	Current.M3UPath = newM3UPath
-	return saveConfig()
+func (config *Config) SaveM3UPath(newM3UPath string) (err error) {
+	config.M3UPath = newM3UPath
+	return saveConfig(config)
+}
+
+// SaveRecents - Save recent channels to file, in order to preserve between restarts.
+func (config *Config) SaveRecents(newRecents []string) (err error) {
+	config.Recents = newRecents
+	return saveConfig(config)
+}
+
+// ClearRecents -
+func (config *Config) ClearRecents() (err error) {
+	config.Recents = make([]string, 0)
+	return saveConfig(config)
 }
 
 // SaveFavorites - Save favorite channels to file, in order to preserve between restarts.
-func SaveFavorites(newFavorites []string) (err error) {
-	Current.Favorites = newFavorites
-	return saveConfig()
+func (config *Config) SaveFavorites(newFavorites []string) (err error) {
+	config.Favorites = newFavorites
+	return saveConfig(config)
 }
 
-func ClearFavorites() (err error) {
-	Current.Favorites = nil
-	return saveConfig()
+// ClearFavorites -
+func (config *Config) ClearFavorites() (err error) {
+	config.Favorites = make([]string, 0)
+	return saveConfig(config)
 }

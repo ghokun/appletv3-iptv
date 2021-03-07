@@ -2,7 +2,11 @@ package m3u
 
 import (
 	"errors"
+	"strconv"
 	"strings"
+
+	"github.com/ghokun/appletv3-iptv/internal/config"
+	"github.com/ghokun/appletv3-iptv/internal/logging"
 )
 
 // Playlist struct defines a M3U playlist. M3U playlist starts with #EXTM3U line.
@@ -129,6 +133,11 @@ func (playlist *Playlist) SetRecentChannel(selectedChannel Channel) {
 	selectedChannel.RecentOrdinal = 1
 	selectedChannel.IsRecent = true
 	playlist.Categories[selectedChannel.CategoryID].Channels[selectedChannel.ID] = selectedChannel
+
+	err := config.Current.SaveRecents(channelsToString(playlist.GetRecentChannels(), true))
+	if err != nil {
+		logging.Warn("Error while saving recents: " + err.Error())
+	}
 }
 
 // ClearRecentChannels - Clears recent channel list.
@@ -136,6 +145,10 @@ func (playlist *Playlist) ClearRecentChannels() {
 	for _, channel := range playlist.GetRecentChannels() {
 		channel.IsRecent = false
 		playlist.Categories[channel.CategoryID].Channels[channel.ID] = channel
+	}
+	err := config.Current.ClearRecents()
+	if err != nil {
+		logging.Warn("Error while clearing recents: " + err.Error())
 	}
 }
 
@@ -159,7 +172,8 @@ func (playlist *Playlist) ToggleFavoriteChannel(category string, channel string)
 	}
 	selectedChannel.IsFavorite = !selectedChannel.IsFavorite
 	playlist.Categories[category].Channels[channel] = selectedChannel
-	return nil
+	err = config.Current.SaveFavorites(channelsToString(playlist.GetFavoriteChannels(), false))
+	return err
 }
 
 // ClearFavoriteChannels - Clears favorite channel list.
@@ -167,6 +181,10 @@ func (playlist *Playlist) ClearFavoriteChannels() {
 	for _, channel := range playlist.GetFavoriteChannels() {
 		channel.IsFavorite = false
 		playlist.Categories[channel.CategoryID].Channels[channel.ID] = channel
+	}
+	err := config.Current.ClearFavorites()
+	if err != nil {
+		logging.Warn(err)
 	}
 }
 
@@ -192,4 +210,15 @@ func (playlist *Playlist) SearchChannels(term string) (searchResults Playlist) {
 		}
 	}
 	return searchResults
+}
+
+func channelsToString(channels []Channel, includeOrdinal bool) (channelsStr []string) {
+	for _, channel := range channels {
+		channelStr := channel.CategoryID + ":" + channel.ID
+		if includeOrdinal {
+			channelStr = channelStr + ":" + strconv.Itoa(channel.RecentOrdinal)
+		}
+		channelsStr = append(channelsStr, channelStr)
+	}
+	return channelsStr
 }

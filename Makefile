@@ -1,13 +1,26 @@
-.PHONY: dev
-dev:
+VERSION := $(shell git describe --tags --dirty)
+LDFLAGS := "-X github.com/ghokun/appletv3-iptv/internal/config.Version=$(VERSION)"
+SOURCE_DIRS := internal main.go
+
+.PHONY: check-fmt
+check-fmt:
+	@test -z $(shell gofmt -l -s $(SOURCE_DIRS) ./ | tee /dev/stderr) || (echo "[WARN] Fix formatting issues with 'go fmt'" && exit 1)
+
+.PHONY: build
+build:
 	rm -rf bin
 	mkdir -p bin
-	go build -ldflags "-X github.com/ghokun/appletv3-iptv/internal/config.Version=Development" -o bin/appletv3-iptv-darwin
+	go build -o bin/appletv3-iptv
+
+.PHONY: copy-sample-config
+copy-sample-config:
+	cp sample/config.yaml bin/config.yaml
+
+.PHONY: dev
+dev: check-fmt build copy-sample-config
 
 .PHONY: release
 release:
-	VERSION := $(shell git describe --tags --dirty)
-	LDFLAGS := "-X github.com/ghokun/appletv3-iptv/internal/config.Version=$(VERSION)"
 	mkdir -p bin
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) -a -o bin/appletv3-iptv
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 go build -ldflags $(LDFLAGS) -a -o bin/appletv3-iptv-armhf

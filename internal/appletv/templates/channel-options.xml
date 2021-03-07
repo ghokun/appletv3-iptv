@@ -11,12 +11,12 @@
         onSelect="atvutils.loadAndSwapURL('{{ $.BasePath }}/player.xml?category={{ .Data.CategoryID }}&amp;channel={{ .Data.ID }}');">
       <label>{{ index .Translations "channel.options.watch" }}</label>
     </oneLineMenuItem>
-    <oneLineMenuItem
+    <!--<oneLineMenuItem
         id="detail"
         accessibilityLabel="{{ index .Translations "channel.options.detail" }}"
         onSelect="atvutils.loadAndSwapURL('{{ $.BasePath }}/channel.xml?category={{ .Data.CategoryID }}&amp;channel={{ .Data.ID }}');">
       <label>{{ index .Translations "channel.options.detail" }}</label>
-    </oneLineMenuItem>
+    </oneLineMenuItem>-->
     {{- if .Data.IsFavorite -}}
     <oneLineMenuItem
         id="toggle-favorite"

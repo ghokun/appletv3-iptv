@@ -8,9 +8,11 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/ghokun/appletv3-iptv/internal/config"
+	"github.com/ghokun/appletv3-iptv/internal/logging"
 )
 
 var (
@@ -18,8 +20,38 @@ var (
 )
 
 // GeneratePlaylist takes an m3u playlist and creates Playlists.
+// Loads recent and favorite channels from config file if exist.
 func GeneratePlaylist() (err error) {
 	playlist, err := ParseM3U(config.Current.M3UPath)
+	if err != nil {
+		return err
+	}
+	for _, recent := range config.Current.Recents {
+		parts := strings.Split(recent, ":")
+		categoryID := parts[0]
+		channelID := parts[1]
+		ordinal := parts[2]
+		channel, err := playlist.GetChannel(categoryID, channelID)
+		if err != nil {
+			logging.Warn(err)
+		} else {
+			channel.IsRecent = true
+			channel.RecentOrdinal, _ = strconv.Atoi(ordinal)
+			playlist.Categories[categoryID].Channels[channelID] = channel
+		}
+	}
+	for _, favorite := range config.Current.Favorites {
+		parts := strings.Split(favorite, ":")
+		categoryID := parts[0]
+		channelID := parts[1]
+		channel, err := playlist.GetChannel(categoryID, channelID)
+		if err != nil {
+			logging.Warn(err)
+		} else {
+			channel.IsFavorite = true
+			playlist.Categories[categoryID].Channels[channelID] = channel
+		}
+	}
 	singleton = &playlist
 	return
 }
