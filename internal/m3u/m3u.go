@@ -103,7 +103,6 @@ func ParseM3U(fileNameOrURL string) (playlist Playlist, err error) {
 			attributes := channelInfo[0]
 			title := channelInfo[1]
 			category, id, logo, description := parseAttributes(attributes, title)
-			err = cacheChannelLogo(id, logo)
 			categoryID := hex.EncodeToString([]byte(category))
 			// Next line is m3u8 url
 			scanner.Scan()
@@ -140,8 +139,9 @@ func ParseM3U(fileNameOrURL string) (playlist Playlist, err error) {
 func parseAttributes(attributes string, title string) (category string, id string, logo string, description string) {
 	tagsRegExp, _ := regexp.Compile("([a-zA-Z0-9-]+?)=\"([^\"]+)\"")
 	tags := tagsRegExp.FindAllString(attributes, -1)
-	id = title
 	category = "Uncategorized"
+	id = title
+	logo = ""
 	description = "TODO EPG"
 
 	for i := range tags {
@@ -162,5 +162,9 @@ func parseAttributes(attributes string, title string) (category string, id strin
 		}
 	}
 	id = hex.EncodeToString([]byte(id))
+	logo, err := computeChannelLogo(id, logo)
+	if err != nil {
+		logging.Warn("Error while fetching channel logo for channel " + title + ". " + err.Error())
+	}
 	return category, id, logo, description
 }

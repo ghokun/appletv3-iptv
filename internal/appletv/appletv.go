@@ -124,7 +124,10 @@ func PlayerHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			errorHandler(w, r, err)
 		} else {
-			m3u.GetPlaylist().SetRecentChannel(selectedChannel)
+			err = m3u.GetPlaylist().SetRecentChannel(selectedChannel)
+			if err != nil {
+				logging.Warn("Error while setting recent channel: " + selectedChannel.Title)
+			}
 			GenerateXML(w, r, "templates/player.xml", selectedChannel)
 		}
 	default:
@@ -197,13 +200,19 @@ func ReloadChannelsHandler(w http.ResponseWriter, r *http.Request) {
 			channel, err := m3u.GetPlaylist().GetChannel(recent.CategoryID, recent.ID)
 			if err == nil {
 				channel.IsRecent = true
-				m3u.GetPlaylist().SetRecentChannel(channel)
+				err = m3u.GetPlaylist().SetRecentChannel(channel)
+				if err != nil {
+					logging.Warn("Error while setting recent channel: " + channel.Title)
+				}
 			}
 		}
 		for _, favorite := range favoriteChannels {
 			_, err := m3u.GetPlaylist().GetChannel(favorite.CategoryID, favorite.ID)
 			if err == nil {
-				m3u.GetPlaylist().ToggleFavoriteChannel(favorite.CategoryID, favorite.ID)
+				err = m3u.GetPlaylist().ToggleFavoriteChannel(favorite.CategoryID, favorite.ID)
+				if err != nil {
+					logging.Warn("Error while setting favorite channel: " + favorite.ID)
+				}
 			}
 		}
 		if err != nil {
@@ -222,8 +231,12 @@ func ReloadChannelsHandler(w http.ResponseWriter, r *http.Request) {
 func ClearRecentHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-		m3u.GetPlaylist().ClearRecentChannels()
-		logging.Info("Cleared recently watched channels.")
+		err := m3u.GetPlaylist().ClearRecentChannels()
+		if err != nil {
+			logging.Warn("Error while clearing recently watched channels.")
+		} else {
+			logging.Info("Cleared recently watched channels.")
+		}
 		http.Redirect(w, r, "/settings.xml", http.StatusSeeOther)
 	default:
 		unsupportedOperationHandler(w, r)
@@ -234,8 +247,12 @@ func ClearRecentHandler(w http.ResponseWriter, r *http.Request) {
 func ClearFavoritesHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-		m3u.GetPlaylist().ClearFavoriteChannels()
-		logging.Info("Cleared favorite channels.")
+		err := m3u.GetPlaylist().ClearFavoriteChannels()
+		if err != nil {
+			logging.Warn("Error while clearing favorite channels.")
+		} else {
+			logging.Info("Cleared favorite channels.")
+		}
 		http.Redirect(w, r, "/settings.xml", http.StatusSeeOther)
 	default:
 		unsupportedOperationHandler(w, r)

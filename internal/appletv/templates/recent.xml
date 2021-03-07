@@ -1,5 +1,4 @@
-{{ define "body" -}}
-<preview>
+{{ define "body" -}}<preview>
   <scrollerPreview id="{{ .BodyID }}">
     <items>
       <grid
@@ -19,12 +18,11 @@
                 src720="{{ $.BasePath }}{{ $value.Logo }}"
                 src1080="{{ $.BasePath }}{{ $value.Logo }}" />
             <ordinal>{{ $value.RecentOrdinal }}</ordinal>
-            <defaultImage>{{ $.BasePath }}/assets/images/16x9.png</defaultImage>
+            <defaultImage>{{ $.BasePath }}/assets/images/missing_logo.png</defaultImage>
           </sixteenByNinePoster>
           {{- end }}
         </items>
       </grid>
     </items>
   </scrollerPreview>
-</preview>
-{{- end }}
+</preview>{{- end }}

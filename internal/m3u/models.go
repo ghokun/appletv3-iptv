@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/ghokun/appletv3-iptv/internal/config"
-	"github.com/ghokun/appletv3-iptv/internal/logging"
 )
 
 // Playlist struct defines a M3U playlist. M3U playlist starts with #EXTM3U line.
@@ -28,7 +27,7 @@ type Channel struct {
 	ID            string // tvg-id or .Title. Spaces are replaced with underscore.
 	Title         string // Channel title, string that comes after comma
 	MediaURL      string // Second line after #EXTINF:-...
-	Logo          string // tvg-logo or placeholder. 16x9 aspect ratio
+	Logo          string // tvg-logo or placeholder. missing_logo aspect ratio
 	Description   string // Unused for now, will be used for EPG implementation
 	Category      string // group-title or Uncategorized if missing
 	CategoryID    string // For link generation purposes
@@ -119,7 +118,7 @@ func (playlist *Playlist) GetRecentChannels() (recentChannels []Channel) {
 }
 
 // SetRecentChannel - Sets selected channel as recent and updates order of other channels.
-func (playlist *Playlist) SetRecentChannel(selectedChannel Channel) {
+func (playlist *Playlist) SetRecentChannel(selectedChannel Channel) error {
 	for _, channel := range playlist.GetRecentChannels() {
 		if selectedChannel.IsRecent {
 			if channel.ID != selectedChannel.ID && selectedChannel.RecentOrdinal > channel.RecentOrdinal {
@@ -134,22 +133,16 @@ func (playlist *Playlist) SetRecentChannel(selectedChannel Channel) {
 	selectedChannel.IsRecent = true
 	playlist.Categories[selectedChannel.CategoryID].Channels[selectedChannel.ID] = selectedChannel
 
-	err := config.Current.SaveRecents(channelsToString(playlist.GetRecentChannels(), true))
-	if err != nil {
-		logging.Warn("Error while saving recents: " + err.Error())
-	}
+	return config.Current.SaveRecents(channelsToString(playlist.GetRecentChannels(), true))
 }
 
 // ClearRecentChannels - Clears recent channel list.
-func (playlist *Playlist) ClearRecentChannels() {
+func (playlist *Playlist) ClearRecentChannels() error {
 	for _, channel := range playlist.GetRecentChannels() {
 		channel.IsRecent = false
 		playlist.Categories[channel.CategoryID].Channels[channel.ID] = channel
 	}
-	err := config.Current.ClearRecents()
-	if err != nil {
-		logging.Warn("Error while clearing recents: " + err.Error())
-	}
+	return config.Current.ClearRecents()
 }
 
 // GetFavoriteChannels - Gets favorite channels.
@@ -177,15 +170,12 @@ func (playlist *Playlist) ToggleFavoriteChannel(category string, channel string)
 }
 
 // ClearFavoriteChannels - Clears favorite channel list.
-func (playlist *Playlist) ClearFavoriteChannels() {
+func (playlist *Playlist) ClearFavoriteChannels() error {
 	for _, channel := range playlist.GetFavoriteChannels() {
 		channel.IsFavorite = false
 		playlist.Categories[channel.CategoryID].Channels[channel.ID] = channel
 	}
-	err := config.Current.ClearFavorites()
-	if err != nil {
-		logging.Warn(err)
-	}
+	return config.Current.ClearFavorites()
 }
 
 // SearchChannels - Searches channel titles with the given term, case insensitive.

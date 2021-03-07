@@ -26,7 +26,7 @@
               <longDescriptionPreview>
                 <title>{{ index .Translations "channels.recent.empty.title" }}</title>
                 <summary>{{ index .Translations "channels.recent.empty.description" }}</summary>
-                <image>{{ .BasePath }}/assets/images/settings.png</image>
+                <image>{{ .BasePath }}/assets/images/no_recents.png</image>
               </longDescriptionPreview>
               {{ else }}
               <link>{{ .BasePath }}/recent.xml</link>
@@ -43,7 +43,7 @@
               <longDescriptionPreview>
                 <title>{{ index .Translations "channels.favorites.empty.title" }}</title>
                 <summary>{{ index .Translations "channels.favorites.empty.description" }}</summary>
-                <image>{{ .BasePath }}/assets/images/settings.png</image>
+                <image>{{ .BasePath }}/assets/images/no_favorites.png</image>
               </longDescriptionPreview>
               {{ else }}
               <link>{{ .BasePath }}/favorites.xml</link>

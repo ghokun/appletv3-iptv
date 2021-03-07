@@ -1,59 +1,73 @@
 package m3u
 
 import (
+	"errors"
 	"image"
 	"image/jpeg"
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/nfnt/resize"
 )
 
-func cacheChannelLogo(id string, logo string) (err error) {
+const (
+	cacheFolder = ".cache/logo"
+	missing     = "/assets/images/missing_logo.png"
+)
 
-	// check if cache directory exist
+func missingResponse(err error) (string, error) {
+	return missing, err
+}
 
-	// Cache logos
-	_ = os.Mkdir(".cache", os.ModePerm)
-	_ = os.Mkdir(".cache/logo", os.ModePerm)
-
-	// if logo text is empty put placeholder
-
-	// if logo text is not empty
-
-	// http get
-
-	// success > create resized file
-
-	// fail > put placeholder
-
-	// Get
-	if logo != "" {
-
-		response, err := http.Get(logo)
-		if err != nil {
-			log.Println(err)
-		}
-		if response != nil && response.Body != nil {
-			defer response.Body.Close()
-		}
-		// Create file
-		logo = ".cache/logo/" + id + ".png"
-		file, err := os.Create(logo)
-		if err != nil {
-			log.Fatal(err)
-		}
-		logo = "/logo/" + id + ".png"
-		defer file.Close()
-
-		image, _, err := image.Decode(response.Body)
-		if err == nil {
-			newImage := resize.Resize(160, 90, image, resize.Lanczos3)
-			err = jpeg.Encode(file, newImage, nil)
-		}
-	} else {
-		logo = "/assets/images/16x9.png"
+func fileExists(filename string) bool {
+	fileInfo, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
 	}
-	return
+	return !fileInfo.IsDir()
+}
+
+func computeChannelLogo(id string, rawLogo string) (logo string, err error) {
+
+	err = os.MkdirAll(cacheFolder, os.ModePerm)
+	if err != nil {
+		return missingResponse(err)
+	}
+
+	if rawLogo == "" {
+		return missingResponse(nil)
+	}
+
+	logoFilename := cacheFolder + "/" + id + ".png"
+	logo = "/logo/" + id + ".png"
+
+	if fileExists(logoFilename) {
+		return logo, nil
+	}
+
+	response, err := http.Get(rawLogo)
+	if err != nil {
+		return missingResponse(err)
+	}
+
+	defer response.Body.Close()
+
+	if response.StatusCode >= 200 && response.StatusCode < 300 {
+		image, _, err := image.Decode(response.Body)
+		if err != nil {
+			return missingResponse(err)
+		}
+		resizedImage := resize.Resize(320, 180, image, resize.Lanczos3)
+
+		file, err := os.Create(logoFilename)
+		if err != nil {
+			return missingResponse(err)
+		}
+		err = jpeg.Encode(file, resizedImage, nil)
+		if err != nil {
+			return missingResponse(err)
+		}
+		return logo, nil
+	}
+	return missingResponse(errors.New("Error while fetching channel logo. Status code: " + response.Status))
 }

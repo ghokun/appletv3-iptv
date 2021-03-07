@@ -48,9 +48,8 @@ Code parts or ideas are taken from following repositories:
 - https://github.com/jamesnetherton/m3u
 
 ## Tasks
-- [ ] Placeholder icons
 - [ ] Cleanup javascript files
-- [ ] Include DNS server
-- [ ] Prevent Apple TV software update
 - [ ] Inject application icon
 - [ ] EPG support
+- [ ] Include DNS server
+- [ ] Prevent Apple TV software update
