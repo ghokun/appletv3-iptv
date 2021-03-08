@@ -42,6 +42,11 @@ chmod +x appletv3-iptv
 6. Open RedbullTV application
 
 
+## Compability
+| Device      | OS |
+| ----------- | :---: |
+| ATV3 A1469  | 7.6.2 |
+
 ## Credits
 Code parts or ideas are taken from following repositories:
 - https://github.com/iBaa/PlexConnect
