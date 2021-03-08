@@ -27,7 +27,8 @@ recents: []
 favorites: []
 ```
 ```bash
-./appletv3-iptv -config config.yaml
+chmod +x appletv3-iptv
+./appletv3-iptv -config config.yaml # May need administrative permissions ports are under 1024
 ```
 5. Install profile on Apple TV
 ```
