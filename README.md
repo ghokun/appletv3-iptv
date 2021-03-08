@@ -9,7 +9,7 @@ This is an IPTV application for Apple TV 3 devices. It replaces RedbullTV app.
 openssl req -new -nodes -newkey rsa:2048 -out redbulltv.pem -keyout redbulltv.key -x509 -days 7300 -subj "/C=US/CN=appletv.redbull.tv"
 openssl x509 -in redbulltv.pem -outform der -out redbulltv.cer && cat redbulltv.key >> redbulltv.pem
 ```
-3. Download binary for your platform from releases.
+3. Download binary for your platform from [releases](https://github.com/ghokun/appletv3-iptv/releases).
 4. Create a settings file and run
 ```yaml
 # See sample/config.yaml
