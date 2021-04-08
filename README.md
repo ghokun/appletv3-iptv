@@ -59,3 +59,4 @@ Code parts or ideas are taken from following repositories:
 - [ ] EPG support
 - [ ] Include DNS server
 - [ ] Prevent Apple TV software update
+- [ ] Add screenshots
