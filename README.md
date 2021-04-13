@@ -74,6 +74,10 @@ Code parts or ideas are taken from following repositories:
 - https://github.com/wahlmanj/sample-aTV
 - https://github.com/jamesnetherton/m3u
 
+## Screenshots
+<img width="633" alt="Screen Shot 2021-04-13 at 21 50 28" src="https://user-images.githubusercontent.com/3802058/114604988-44edc400-9ca2-11eb-83d8-a14b2e6c5e29.png">
+<img width="505" alt="Screen Shot 2021-04-13 at 21 35 54" src="https://user-images.githubusercontent.com/3802058/114603306-3dc5b680-9ca0-11eb-831a-2c4549b0fd52.png">
+
 ## Tasks
 - [ ] Cleanup javascript files
 - [ ] Inject application icon
