@@ -26,10 +26,31 @@ loggingPath: log
 recents: []
 favorites: []
 ```
+Run from command line:
 ```bash
 chmod +x appletv3-iptv
 ./appletv3-iptv -config config.yaml # May need administrative permissions ports are under 1024
 ```
+
+Run as a systemd service:
+```
+[Unit]
+Description=appletv3-iptv
+
+[Service]
+User=root
+ExecStart=/opt/appletv3-iptv/appletv3-iptv -config /opt/appletv3-iptv/config.yaml
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable appletv3-iptv.service 
+sudo systemctl start appletv3-iptv.service
+```
+
 5. Install profile on Apple TV
 ```
 1. Open Apple TV
