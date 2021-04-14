@@ -1,4 +1,5 @@
-{{ define "body" -}}<searchResults id="{{ .BodyID }}">
+{{ define "body" -}}
+<searchResults id="{{ .BodyID }}">
   <menu>
     <sections>
       {{ range $key, $value := .Data.Categories }}
@@ -19,7 +20,7 @@
               onPlay="atvutils.loadURL('{{ $.BasePath }}/player.xml?category={{ $subValue.CategoryID }}&amp;channel={{ $subValue.ID }}');">
             <label>{{ if $subValue.IsFavorite }}⭐ {{ end }}{{ $subValue.Title }}</label>
             <label2>{{ $subValue.Category }}</label2>
-            <image>{{ $.BasePath }}{{ $subValue.Logo }}</image>
+            <image>{{ $subValue.Logo }}</image>
           </posterMenuItem>
           {{- end }}
         </items>
@@ -27,4 +28,5 @@
       {{- end }}
     </sections>
   </menu>
-</searchResults>{{- end }}
+</searchResults>
+{{- end }}

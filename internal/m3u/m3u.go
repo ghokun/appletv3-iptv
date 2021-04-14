@@ -13,6 +13,7 @@ import (
 
 	"github.com/ghokun/appletv3-iptv/internal/config"
 	"github.com/ghokun/appletv3-iptv/internal/logging"
+	"github.com/google/uuid"
 )
 
 var (
@@ -140,7 +141,7 @@ func parseAttributes(attributes string, title string) (category string, id strin
 	tagsRegExp, _ := regexp.Compile("([a-zA-Z0-9-]+?)=\"([^\"]+)\"")
 	tags := tagsRegExp.FindAllString(attributes, -1)
 	category = "Uncategorized"
-	id = title
+	id = title + uuid.New().String()
 	logo = ""
 	description = "TODO EPG"
 
@@ -151,9 +152,9 @@ func parseAttributes(attributes string, title string) (category string, id strin
 		if tagKey == "group-title" {
 			category = tagValue
 		}
-		if tagKey == "tvg-id" {
-			id = tagValue
-		}
+		// if tagKey == "tvg-id" {
+		// 	id = tagValue
+		// }
 		if tagKey == "tvg-logo" {
 			logo = tagValue
 		}
@@ -162,9 +163,9 @@ func parseAttributes(attributes string, title string) (category string, id strin
 		}
 	}
 	id = hex.EncodeToString([]byte(id))
-	logo, err := computeChannelLogo(id, logo)
-	if err != nil {
-		logging.Warn("Error while fetching channel logo for channel " + title + ". " + err.Error())
-	}
+	//logo, err := computeChannelLogo(id, logo)
+	// if err != nil {
+	// 	logging.Warn("Error while fetching channel logo for channel " + title + ". " + err.Error())
+	// }
 	return category, id, logo, description
 }

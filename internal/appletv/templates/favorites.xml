@@ -1,4 +1,5 @@
-{{ define "body" -}}<preview>
+{{ define "body" -}}
+<preview>
   <scrollerPreview id="{{ .BodyID }}">
     <items>
       <grid
@@ -15,8 +16,8 @@
             <title>{{ if $value.IsFavorite }}⭐ {{ end }}{{ $value.Title }}</title>
             <subtitle>{{ $value.Category }}</subtitle>
             <image
-                src720="{{ $.BasePath }}{{ $value.Logo }}"
-                src1080="{{ $.BasePath }}{{ $value.Logo }}" />
+                src720="{{ $value.Logo }}"
+                src1080="{{ $value.Logo }}" />
             <defaultImage>{{ $.BasePath }}/assets/images/missing_logo.png</defaultImage>
           </sixteenByNinePoster>
           {{- end }}
@@ -24,4 +25,5 @@
       </grid>
     </items>
   </scrollerPreview>
-</preview>{{- end }}
+</preview>
+{{- end }}
