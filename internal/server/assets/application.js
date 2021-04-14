@@ -805,7 +805,7 @@ if (atv.player) {
     }, 5000);
 
     // Creates a text view that will be overlayed at the top of the video.
-    TextViewController.initiateView("counter");
+    // TextViewController.initiateView("counter");
 
     atv.sessionStorage["already-watched-ad"] = false;
     atv.sessionStorage["in-ad"] = false;
