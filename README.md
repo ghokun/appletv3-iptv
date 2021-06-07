@@ -66,7 +66,7 @@ sudo systemctl start appletv3-iptv.service
 ## Compability
 | Device      | OS |
 | ----------- | :---: |
-| ATV3 A1469  | 7.6.2 |
+| ATV3 A1469  | 7.6.2, 7.7 |
 
 ## Credits
 Code parts or ideas are taken from following repositories:
